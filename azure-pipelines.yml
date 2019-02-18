@@ -10,9 +10,19 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  imageName: 'your-container-image-name:$(build.buildId)'
-  prefix: camino.azurecr.io/
+  containerRegistry: camino.azurecr.io
+  prefix: $(containerRegistry)/
+  imageName: '$(prefix)che-plugin-registry:$(build.buildId)'
 
 steps:
-- script: docker build -f Dockerfile -t $(prefix)$(imageName) .
+- task: AzureCLI@1
+  inputs:
+    azureSubscription: 1fbdb4bb-441e-4922-ba1f-ffd04f533ea1
+    scriptLocation: 'inlineScript'
+    inlineScript: az acr login -n $(containerRegistry)
+
+- script: docker build -f Dockerfile -t $(imageName) .
   displayName: 'docker build'
+
+- script: docker push $(imageName)
+  displayName: 'docker push'
