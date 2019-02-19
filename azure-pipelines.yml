@@ -17,7 +17,6 @@ variables:
 steps:
 - task: AzureCLI@1
   inputs:
-    azureSubscription: 1fbdb4bb-441e-4922-ba1f-ffd04f533ea1
     scriptLocation: 'inlineScript'
     inlineScript: az acr login -n $(containerRegistry)
 
