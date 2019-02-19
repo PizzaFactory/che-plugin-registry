@@ -1,0 +1,12 @@
+id: org.eclipse.che.editor.node-red
+version: 0.0.1
+type: Che Editor
+name: node-red
+title: Node-RED Editor for Eclipse Che
+description: Node-RED Editor for Eclipse Che
+icon: https://nodered.org/about/resources/media/node-red-hexagon.svg
+url: https://github.com/PizzaFactory/camino-ws-node-red/releases/download/untagged-d4c3da9c1e59356c25f4/che-editor-plugin.tar.gz
+publisher: Monami-ya LLC, Japan.
+repository: https://github.com/che-ws-node-red
+category: Other
+firstPublicationDate: "2019-02-19"
