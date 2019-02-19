@@ -29,5 +29,5 @@ steps:
 - script: docker push $(imageName)
   displayName: 'docker push'
 
-- script: helm upgrade --install --set=chePluginRegistryImage=$(imageName),global.ingressDomain=c.pizzafactory.jp --namespace=camino che-plugin-registry ./kubernetes/che-plugin-registry/
+- script: helm upgrade --install --set=chePluginRegistryImage=$(imageName),global.ingressDomain=c.pizzafactory.jp,global.ingress.class=traefik --namespace=camino che-plugin-registry ./kubernetes/che-plugin-registry/
   displayName: 'upgrade by Helm'
