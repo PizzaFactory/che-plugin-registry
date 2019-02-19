@@ -19,10 +19,15 @@ steps:
   inputs:
     connectedServiceNameARM: 'camino'
     scriptLocation: 'inlineScript'
-    inlineScript: az acr login -n $(containerRegistry)
+    inlineScript: |
+      az acr login -n camino
+      az aks get-credentials --resource-group camino  --name camino
 
 - script: docker build -f Dockerfile -t $(imageName) .
   displayName: 'docker build'
 
 - script: docker push $(imageName)
   displayName: 'docker push'
+
+- script: helm upgrade --install --set=chePluginRegistryImage=$(imageName),global.ingressDomain=c.pizzafactory.jp --namespace=camino che-plugin-registry ./kubernetes/che-plugin-registry/
+  displayName: 'upgrade by Helm'
