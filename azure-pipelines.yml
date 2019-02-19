@@ -21,7 +21,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       az acr login -n camino
-      az aks get-credentials --resource-group camino  --name camino
+      az aks get-credentials --resource-group camino  --name camino-wus-2
 
 - script: docker build -f Dockerfile -t $(imageName) .
   displayName: 'docker build'
