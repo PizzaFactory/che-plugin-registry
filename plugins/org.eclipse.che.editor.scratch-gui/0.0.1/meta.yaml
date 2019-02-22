@@ -1,0 +1,12 @@
+id: org.eclipse.che.editor.scratch-gui
+version: 0.0.1
+type: Che Editor
+name: scratch-gui
+title: Scratch(GUI) Editor for Eclipse Che
+description: Scratch(GUI) Editor for Eclipse Che
+icon: https://upload.wikimedia.org/wikipedia/commons/d/d6/Scratch_Logo.svg
+url: https://github.com/PizzaFactory/camino-ws-scratch-gui/releases/download/untagged-895964da0e081678dec4/che-editor-plugin.tar.gz
+publisher: Monami-ya LLC, Japan.
+repository: https://github.com/PizzaFactory/che-ws-scratch-gui
+category: Other
+firstPublicationDate: "2019-02-22"
