@@ -6,7 +6,7 @@
 variables:
   containerRegistry: camino.azurecr.io
   prefix: $(containerRegistry)/
-  imageName: '$(prefix)che-plugin-registry:$(build.buildId)'
+  imageName: '$(prefix)che-plugin-registry'
 
 pool:
   vmImage: 'Ubuntu-16.04'
@@ -22,6 +22,9 @@ steps:
     dockerRegistryEndpoint: camino.azurecr.io
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
 
-- script: docker push $(imageName)
+- script: |
+    docker push $(imageName)
+    docker tag $(imageName) $(imageName):$(build.buildId)
+    docker push $(imageName):$(build.buildId)
   displayName: 'docker push'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
