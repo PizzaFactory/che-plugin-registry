@@ -8,28 +8,20 @@ variables:
   prefix: $(containerRegistry)/
   imageName: '$(prefix)che-plugin-registry:$(build.buildId)'
 
-jobs:
-- job: Build
-  condition: ne(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines')
+pool:
+  vmImage: 'Ubuntu-16.04'
 
-  steps:
-  - script: docker build -f Dockerfile -t $(imageName) .
-    displayName: 'docker build'
+steps:
+- script: docker build -f Dockerfile -t $(imageName) .
+  displayName: 'docker build'
 
-- job: Deploy
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines')
-  pool:
-    vmImage: 'Ubuntu-16.04'
+- task: Docker@1
+  inputs:
+    command: login
+    containerregistrytype: Container Registry
+    dockerRegistryEndpoint: camino.azurecr.io
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
 
-  steps:
-  - task: Docker@1
-    inputs:
-      command: login
-      containerregistrytype: Container Registry
-      dockerRegistryEndpoint: camino.azurecr.io
-
-  - script: docker build -f Dockerfile -t $(imageName) .
-    displayName: 'docker build'
-
-  - script: docker push $(imageName)
-    displayName: 'docker push'
+- script: docker push $(imageName)
+  displayName: 'docker push'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
