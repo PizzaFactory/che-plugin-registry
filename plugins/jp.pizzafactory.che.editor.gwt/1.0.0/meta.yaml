@@ -1,0 +1,12 @@
+id: jp.pizzafactory.che.editor.gwt
+version: 1.0.0
+type: Che Editor
+name: gwt-ide
+title: Eclipse GWT IDE for Eclipse Che (pf)
+description: Eclipse GWT IDE (PizzaFactory edition)
+icon: https://www.eclipse.org/che/images/logo-eclipseche.svg
+url: https://github.com/PizzaFactory/che-editor-gwt-ide/releases/download/untagged-57509b9efe08276b38f5/che-editor-plugin.tar.gz
+publisher: Monami-ya LLC, Japan
+category: Editor
+repository: https://github.com/pizzafactory/che-editor-gwt-ide/
+firstPublicationDate: "2019-04-01"
