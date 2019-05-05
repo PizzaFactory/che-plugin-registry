@@ -8,33 +8,62 @@
 # SPDX-License-Identifier: EPL-2.0
 #
 
-## search for all editors and plugins
-declare -a arr=(`find . -name "meta.yaml"`)
-FIRST_LINE=true
-echo "["
-## now loop through meta files
-for i in "${arr[@]}"
-do
-    if [ "$FIRST_LINE" = true ] ; then
-        echo "{"
-        FIRST_LINE=false
-    else
-        echo ",{"
-    fi
+set -e
 
-    # 1. read meta.yaml to stio
-    cat $i| \
-        # 2. filter lines with name,version,type
-        grep -e 'name:' -e 'version:' -e 'type:' -e 'id:' -e 'description' |\
-        # 3. Replace ` :` with `":"`
-        sed 's/: /\":"/g'  |\
-        # 4. Append `",` to the end of each line
-        sed 's/$/\",/g' |\
-        # 5. Append `"` at the beginning of each line
-        sed 's/^/\"/g'  |\
-        # 6. Remove all new lines
-        tr -d '\n'
-    echo " \"links\": {\"self\":\"$(echo $i|sed 's/^.//g' )\" }"
-    echo "}"
-done
-echo "]"
+source ./util.sh
+
+# Returns generated plugin ID.
+# Arguments:
+# 1 - meta.yaml location
+function getId() {
+    name_field=$(yq r "$1" id | sed 's/^"\(.*\)"$/\1/')
+    echo "${name_field}"
+}
+
+# getId function MUST be defined to use this function
+# Arguments:
+# 1 - folder to search files in
+function buildIndex() {
+    fields=('displayName' 'version' 'type' 'name' 'description' 'publisher')
+    ## search for all editors and plugins
+    declare -a arr=(`find "$1" -name "meta.yaml"`)
+    FIRST_LINE=true
+    echo "["
+    ## now loop through meta files
+    for i in "${arr[@]}"
+    do
+        if [ "$FIRST_LINE" = true ] ; then
+            echo "{"
+            FIRST_LINE=false
+        else
+            echo ",{"
+        fi
+
+        plugin_id=$(getId $i)
+        echo "  \"id\": \"$plugin_id\","
+
+        for field in ${fields[@]}
+        do
+            echo "  \"$field\":\""$(yq r "$i" "$field" | sed 's/^"\(.*\)"$/\1/')"\","
+        done
+
+        # Add deprecate section
+        migrate_to_field=$(yq r "$i" deprecate.migrateTo | sed 's/^"\(.*\)"$/\1/')
+        if [ "${migrate_to_field}" != "null" ]; then
+            echo "  \"deprecate\":{"
+            echo "     \"migrateTo\":\"${migrate_to_field}\","
+            auto_migrate_field=$(yq r "$i" deprecate.autoMigrate)
+            if [ "${auto_migrate_field}" = "null" ]; then
+                auto_migrate_field=false
+            fi
+            echo "     \"autoMigrate\":${auto_migrate_field}"
+            echo "  },"
+        fi
+
+        echo "  \"links\": {\"self\":\"/$(echo $i)\" }"
+        echo "}"
+    done
+    echo "]"
+}
+
+buildIndex plugins
