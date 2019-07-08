@@ -12,7 +12,9 @@ category: Language
 firstPublicationDate: "2019-04-25"
 spec:
   containers:
-    - image: "eclipse/che-remote-plugin-runner-java11:next"
+    - image: "eclipse/che-remote-plugin-runner-java11:7.0.0-rc-3.0"
+      name: vscode-java
+      memoryLimit: "1500Mi"
   extensions:
     - https://github.com/microsoft/vscode-java-debug/releases/download/0.16.0/vscode-java-debug-0.16.0.vsix
     - http://download.jboss.org/jbosstools/static/jdt.ls/stable/java-0.43.0-1473.vsix
