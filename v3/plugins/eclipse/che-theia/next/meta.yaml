@@ -4,7 +4,7 @@ name: che-theia
 version: next
 type: Che Editor
 displayName: theia-ide
-title: Eclipse Theia development version (enhanced by PizzaFactory).
+title: Eclipse Theia development version.
 description: Eclipse Theia, get the latest release each day.
 icon: https://raw.githubusercontent.com/theia-ide/theia/master/logo/theia-logo-no-text-black.svg?sanitize=true
 category: Editor
@@ -48,7 +48,7 @@ spec:
         discoverable: false
   containers:
    - name: theia-ide
-     image: camino.azurecr.io/camino/che-theia:next
+     image: eclipse/che-theia:next
      env:
          - name: THEIA_PLUGINS
            value: local-dir:///plugins
