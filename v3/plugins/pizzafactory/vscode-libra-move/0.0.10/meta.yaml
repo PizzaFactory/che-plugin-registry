@@ -12,8 +12,8 @@ category: Language
 repository: https://github.com/pizzafactory-contorno/vscode-libra-move/
 spec:
   containers:
-    - image: "eclipse/che-remote-plugin-runner-java8:7.0.0-next"
-      name: vscode-xtend-lang
-      memoryLimit: "768Mi"
+    - image: "docker.io/eclipse/che-remote-plugin-runner-java8:next"
+      name: vscode-libra-move
+      memoryLimit: "512Mi"
   extensions:
     - https://github.com/pizzafactory-contorno/vscode-libra-move/releases/download/v0.0.10-ddc0d3d/vscode-libra-move-0.0.10.vsix
