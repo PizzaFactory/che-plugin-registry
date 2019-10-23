@@ -48,14 +48,14 @@ spec:
         discoverable: false
   containers:
    - name: theia-ide
-     image: "docker.io/eclipse/che-theia:7.2.0"
+     image: "docker.io/eclipse/che-theia:7.3.0"
      env:
          - name: THEIA_PLUGINS
            value: local-dir:///plugins
          - name: HOSTED_PLUGIN_HOSTNAME
            value: 0.0.0.0
          - name: HOSTED_PLUGIN_PORT
-           value: 3130
+           value: "3130"
      volumes:
          - mountPath: "/plugins"
            name: plugins
