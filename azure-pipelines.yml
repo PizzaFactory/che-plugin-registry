@@ -8,14 +8,14 @@ trigger:
 
 variables:
   containerRegistry: camino.azurecr.io
-  prefix: $(containerRegistry)/
-  imageName: '$(prefix)che-plugin-registry'
+  organization: camino
+  tag: nightly
 
 pool:
   vmImage: 'Ubuntu-16.04'
 
 steps:
-- script: docker build -f Dockerfile -t $(imageName) .
+- script: ./build.sh -r $(containerRegistry) -o $(organization) -t $(tag)
   displayName: 'docker build'
 
 - task: Docker@1
@@ -26,8 +26,6 @@ steps:
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
 
 - script: |
-    docker push $(imageName)
-    docker tag $(imageName) $(imageName):$(build.buildId)
-    docker push $(imageName):$(build.buildId)
+    docker push $(containerRegistry)/$(organization)/che-plugin-registry:$(tag)
   displayName: 'docker push'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
