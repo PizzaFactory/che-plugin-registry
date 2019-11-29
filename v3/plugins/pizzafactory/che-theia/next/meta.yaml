@@ -1,15 +1,15 @@
 apiVersion: v2
-publisher: eclipse
+publisher: pizzafactory
 name: che-theia
 version: next
 type: Che Editor
 displayName: theia-ide
-title: Eclipse Theia development version.
+title: Eclipse Theia development version (enhanced by PizzaFactory).
 description: Eclipse Theia, get the latest release each day.
 icon: https://raw.githubusercontent.com/theia-ide/theia/master/logo/theia-logo-no-text-black.svg?sanitize=true
 category: Editor
 repository: https://github.com/eclipse/che-theia
-firstPublicationDate: "2019-03-07"
+firstPublicationDate: "2019-08-07"
 spec:
   endpoints:
    -  name: "theia"
@@ -48,14 +48,14 @@ spec:
         discoverable: false
   containers:
    - name: theia-ide
-     image: "docker.io/eclipse/che-theia:next"
+     image: camino.azurecr.io/camino/che-theia:next
      env:
          - name: THEIA_PLUGINS
            value: local-dir:///plugins
          - name: HOSTED_PLUGIN_HOSTNAME
            value: 0.0.0.0
          - name: HOSTED_PLUGIN_PORT
-           value: "3130"
+           value: 3130
      volumes:
          - mountPath: "/plugins"
            name: plugins
@@ -67,15 +67,3 @@ spec:
          - exposedPort: 13132
          - exposedPort: 13133
      memoryLimit: "512M"
-  initContainers:
-  - name: remote-runtime-injector
-    image: "docker.io/eclipse/che-theia-endpoint-runtime-binary:next"
-    volumes:
-      - mountPath: "/remote-endpoint"
-        name: remote-endpoint
-        ephemeral: true
-    env:
-      - name: PLUGIN_REMOTE_ENDPOINT_EXECUTABLE
-        value: /remote-endpoint/plugin-remote-endpoint
-      - name: REMOTE_ENDPOINT_VOLUME_NAME
-        value: remote-endpoint
