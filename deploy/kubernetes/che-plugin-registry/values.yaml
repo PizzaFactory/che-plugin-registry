@@ -7,18 +7,18 @@
 # SPDX-License-Identifier: EPL-2.0
 #
 
-chePluginRegistryImage: quay.io/eclipse/che-plugin-registry:nightly
+chePluginRegistryImage: camino.azurecr.io/camino/che-plugin-registry:nightly
 chePluginRegistryImagePullPolicy: Always
 chePluginRegistryMemoryLimit: 256Mi
-#chePluginRegistryIngressSecretName: che-tls
+chePluginRegistryIngressSecretName: che-tls
 
 # Used to override plugin sidecar image references
 chePluginSidecarOverride:
-  url:
+  url: camino.azurecr.io
   organization:
   tag:
 
 global:
-  ingressDomain: 192.168.99.100.nip.io
+  ingressDomain: c.pizzafactory.jp
   ingress:
-    class: 'nginx'
+    class: 'traefik'
