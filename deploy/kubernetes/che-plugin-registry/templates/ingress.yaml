@@ -26,8 +26,8 @@ spec:
           serviceName: che-plugin-registry
           servicePort: 8080
 {{- if .Values.chePluginRegistryIngressSecretName }}
-    tls:
-    - hosts:
-      - {{ template "hostname" . -}} . {{- .Values.global.ingressDomain }}
-      secretName: {{ .Values.chePluginRegistryIngressSecretName }}
+  tls:
+  - hosts:
+    - {{ template "hostname" . -}} . {{- .Values.global.ingressDomain }}
+    secretName: {{ .Values.chePluginRegistryIngressSecretName }}
 {{- end -}}
