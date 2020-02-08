@@ -17,8 +17,8 @@ chePluginRegistryIngressSecretName: che-tls
 # Used to override plugin sidecar image references
 chePluginSidecarOverride:
   url: camino.azurecr.io
-  organization:
-  tag:
+#  organization:
+#  tag:
 
 global:
   ingressDomain: c.pizzafactory.jp
