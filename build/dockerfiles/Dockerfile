@@ -12,9 +12,10 @@
 
 # Builder: check meta.yamls and create index.json
 FROM alpine:3.10 AS builder
-RUN apk add --no-cache py-pip jq bash wget && pip install yq jsonschema
+RUN apk add --no-cache py-pip jq bash wget skopeo && pip install yq jsonschema
 
 ARG LATEST_ONLY=false
+ARG USE_DIGESTS=false
 
 COPY ./build/scripts/*.sh ./build/scripts/meta.yaml.schema /build/
 COPY /v3 /build/v3
@@ -23,14 +24,14 @@ WORKDIR /build/
 RUN if [[ ${LATEST_ONLY} == "true" ]]; then \
       ./keep_only_latest.sh; \
     fi
-
-RUN ./generate_latest_metas.sh v3 && \
-    ./check_plugins_location.sh v3 && \
-    ./set_plugin_dates.sh v3 && \
-    ./check_metas_schema.sh v3 && \
-    ./index.sh v3 > /build/v3/plugins/index.json && \
-    ./list_referenced_images.sh v3 > /build/v3/external_images.txt && \
-    chmod -R g+rwX /build
+RUN ./generate_latest_metas.sh v3
+RUN ./check_plugins_location.sh v3
+RUN ./set_plugin_dates.sh v3
+RUN ./check_metas_schema.sh v3
+RUN if [[ ${USE_DIGESTS} == "true" ]]; then ./write_image_digests.sh v3;fi
+RUN ./index.sh v3 > /build/v3/plugins/index.json
+RUN ./list_referenced_images.sh v3 > /build/v3/external_images.txt
+RUN chmod -R g+rwX /build
 
 # Build registry, copying meta.yamls and index.json from builder
 FROM registry.centos.org/centos/httpd-24-centos7 AS registry
