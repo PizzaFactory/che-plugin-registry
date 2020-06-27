@@ -6,6 +6,14 @@
 trigger:
 - azure-pipelines
 
+schedules:
+- cron: "20 12 * * *"
+  displayName: Daily build
+  branches:
+    include:
+    - azure-pipelines
+  always: true
+
 variables:
   containerRegistry: camino.azurecr.io
   organization: camino
@@ -29,3 +37,12 @@ steps:
     docker push $(containerRegistry)/$(organization)/che-plugin-registry:$(tag)
   displayName: 'docker push'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
+
+- task: AzureCLI@2
+  displayName: 'Image imports'
+  inputs:
+    azureSubscription: 'camino: BizSpark (1fbdb4bb-441e-4922-ba1f-ffd04f533ea1)'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: 'grep -r image: v3 | grep -v registry.access.redhat.com | awk ''!/camino/ { print $NF }'' | sort | uniq | awk ''{ print "az acr import --force --name camino --source " $NF}'' | sh -x'
+    #  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
