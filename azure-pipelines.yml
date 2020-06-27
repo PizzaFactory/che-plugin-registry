@@ -45,4 +45,4 @@ steps:
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: 'grep -r image: v3 | grep -v registry.access.redhat.com | awk ''!/camino/ { print $NF }'' | sort | uniq | awk ''{ print "az acr import --force --name camino --source " $NF}'' | sh -x'
-    #  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
