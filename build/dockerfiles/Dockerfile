@@ -19,8 +19,10 @@ ARG USE_DIGESTS=false
 
 COPY ./build/scripts/*.sh ./build/scripts/meta.yaml.schema /build/
 COPY /v3 /build/v3
+COPY ./vscode-extensions.json /build/
 WORKDIR /build/
 
+RUN ./check_sorted_json.sh
 RUN if [[ ${LATEST_ONLY} == "true" ]]; then \
       ./keep_only_latest.sh; \
     fi
@@ -41,7 +43,8 @@ RUN apk add --no-cache bash && \
     sed -i 's|Listen 80|Listen 8080|' /usr/local/apache2/conf/httpd.conf && \
     mkdir -p /var/www && ln -s /usr/local/apache2/htdocs /var/www/html && \
     chmod -R g+rwX /usr/local/apache2 && \
-    echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf
+    echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf && \
+    apk add --no-cache coreutils
 COPY README.md .htaccess /usr/local/apache2/htdocs/
 COPY --from=builder /build/v3 /usr/local/apache2/htdocs/v3
 COPY ./build/dockerfiles/entrypoint.sh /usr/bin/
