@@ -23,7 +23,7 @@
     },
     {
       "repository": "https://github.com/camel-tooling/camel-lsp-client-vscode",
-      "revision": "0.0.24"
+      "revision": "0.0.26"
     },
     {
       "repository": "https://github.com/camel-tooling/vscode-camelk",
@@ -57,7 +57,7 @@
     },
     {
       "repository": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension",
-      "revision": "0.0.13"
+      "revision": "0.1.0"
     },
     {
       "repository": "https://github.com/felixfbecker/vscode-php-debug",
@@ -107,7 +107,7 @@
     },
     {
       "repository": "https://github.com/redhat-developer/vscode-didact",
-      "revision": "0.1.15"
+      "revision": "0.1.16"
     },
     {
       "repository": "https://github.com/redhat-developer/vscode-java",
