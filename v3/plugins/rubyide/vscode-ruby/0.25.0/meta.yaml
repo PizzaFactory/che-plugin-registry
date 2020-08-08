@@ -1,0 +1,19 @@
+apiVersion: v2
+publisher: rubyide
+name: vscode-ruby
+version: 0.25.0
+type: VS Code extension
+displayName: Ruby tools
+title: Ruby intelliSense, debugging and code browsing
+description: Ruby intelliSense, debugging and code browsing
+icon: https://upload.wikimedia.org/wikipedia/commons/7/73/Ruby_logo.svg
+repository: https://github.com/rubyide/vscode-ruby
+category: Language
+firstPublicationDate: '2020-08-08'
+spec:
+  containers:
+    - image: pizzafactory0contorno/mruby:alpine
+      name: ruby-plugins
+      memoryLimit: 512Mi
+  extensions:
+    - https://github.com/rubyide/vscode-ruby/releases/download/v0.25.0/ruby-0.25.0.vsix
