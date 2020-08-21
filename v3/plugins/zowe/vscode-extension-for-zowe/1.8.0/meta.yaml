@@ -1,7 +1,7 @@
 apiVersion: v2
 publisher: zowe
 name: vscode-extension-for-zowe
-version: 1.5.1
+version: 1.8.0
 type: VS Code extension
 displayName: Zowe Explorer
 title: Zowe Explorer
@@ -18,4 +18,4 @@ spec:
        - name: ZOWE_CLI_HOME
          value: /projects/.zowe
   extensions:
-    - https://github.com/eclipse/che-che4z/releases/download/v2.0.0/vscode-extension-for-zowe-v1.5.1-che.vsix
+    - https://github.com/zowe/vscode-extension-for-zowe/releases/download/v1.8.0/vscode-extension-for-zowe-v1.8.0.vsix
