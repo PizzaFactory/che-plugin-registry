@@ -24,6 +24,16 @@
       "directory": "vscode-client"
     },
     {
+      "repository": "https://github.com/bazelbuild/vscode-bazel",
+      "revision": "0.3.0",
+      "sidecar": {
+        "image": "quay.io/eclipse/che-sidecar-bazel:3.2.0-e352e6b",
+        "source": {
+          "repository": "https://github.com/che-dockerfiles/che-sidecar-bazel"
+        }
+      }
+    },
+    {
       "repository": "https://github.com/bmewburn/vscode-intelephense",
       "revision": "v1.3.11",
       "sidecar": {
@@ -74,7 +84,7 @@
     },
     {
       "repository": "https://github.com/eclipse/che-che4z-explorer-for-endevor",
-      "revision": "0.9.1"
+      "revision": "0.10.0"
     },
     {
       "repository": "https://github.com/eclipse/che-che4z-lsp-for-cobol",
@@ -118,7 +128,7 @@
     },
     {
       "repository": "https://github.com/golang/vscode-go",
-      "revision": "v0.14.4",
+      "revision": "v0.16.1",
       "sidecar": {
         "image": "quay.io/eclipse/che-sidecar-go:1.14.4-afebf70",
         "source": {
@@ -315,8 +325,18 @@
       "revision": "v1.16.0"
     },
     {
+      "repository": "https://github.com/vuejs/vetur",
+      "revision": "0.26.1",
+      "sidecar": {
+        "image": "quay.io/eclipse/che-sidecar-node:12-da9c36b",
+        "source": {
+          "repository": "https://github.com/che-dockerfiles/che-sidecar-node"
+        }
+      }
+    },
+    {
       "repository": "https://github.com/windup/rhamt-vscode-extension",
-      "revision": "ca5adb5786114250fb9d4cebe6a327fd8d4d793c"
+      "revision": "617222def40678e2ef375f713b969c93ea313a69"
     },
     {
       "repository": "https://github.com/zowe/vscode-extension-for-zowe",
