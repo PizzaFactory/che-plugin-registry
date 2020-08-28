@@ -166,6 +166,17 @@
       }
     },
     {
+      "repository": "https://github.com/pizzafactory-contorno/vscode-cocos-bcx",
+      "revision": "0.0.5",
+      "sidecar": {
+        "image": "quay.io/eclipse/che-sidecar-java:8-0cfbacb",
+        "source": {
+          "repository": "https://github.com/che-dockerfiles/che-sidecar-java",
+          "revision": "8"
+        }
+      }
+    },
+    {
       "repository": "https://github.com/pizzafactory-contorno/vscode-libra-move",
       "revision": "v0.0.10-ddc0d3d",
       "sidecar": {
