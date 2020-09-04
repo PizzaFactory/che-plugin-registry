@@ -88,7 +88,7 @@
     },
     {
       "repository": "https://github.com/eclipse/che-che4z-lsp-for-cobol",
-      "revision": "0.12.0",
+      "revision": "0.13.0",
       "directory": "clients/cobol-lsp-vscode-extension/",
       "sidecar": {
         "image": "quay.io/eclipse/che-sidecar-java:11-7bd8c8c",
@@ -270,6 +270,16 @@
       }
     },
     {
+      "repository": "https://github.com/redhat-developer/vscode-tekton",
+      "revision": "v0.2.0",
+      "sidecar": {
+        "image": "quay.io/eclipse/che-sidecar-tekton:0.2.0-7a8b4ad",
+        "source": {
+          "repository": "https://github.com/che-dockerfiles/che-sidecar-tekton"
+        }
+      }
+    },
+    {
       "repository": "https://github.com/redhat-developer/vscode-xml",
       "revision": "0.13.0",
       "sidecar": {
@@ -337,7 +347,7 @@
     },
     {
       "repository": "https://github.com/vuejs/vetur",
-      "revision": "0.26.1",
+      "revision": "v0.26.1",
       "sidecar": {
         "image": "quay.io/eclipse/che-sidecar-node:12-da9c36b",
         "source": {
@@ -356,6 +366,16 @@
         "image": "quay.io/eclipse/che-sidecar-node:12-026416c",
         "source": {
           "repository": "https://github.com/che-dockerfiles/che-sidecar-node"
+        }
+      }
+    },
+    {
+      "repository": "https://github.com/zxh0/vscode-proto3",
+      "revision": "c4d9eeb54294e3cee86254261edf036901f29dec",
+      "sidecar": {
+        "image": "quay.io/eclipse/che-sidecar-protobuf:0.4.2-a79a2ff",
+        "source": {
+          "repository": "https://github.com/che-dockerfiles/che-sidecar-protobuf"
         }
       }
     }
