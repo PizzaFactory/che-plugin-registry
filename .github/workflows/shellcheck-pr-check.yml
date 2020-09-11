@@ -7,25 +7,18 @@
 # SPDX-License-Identifier: EPL-2.0
 #
 
-name: Icon and extensions PR check
+name: shellcheck
 
-on:
-  pull_request:
-    paths:
-    - 'v3/plugins/**'
+on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  check:
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '12'
     - name: Clone source code
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
-    - name: Check icon and extension links
+    - name: ShellCheck
       run: |
-        ./.ci/meta-yaml-icon-extensions-pr-check.sh
+        find . -type f -name "*.sh" | xargs shellcheck --external-sources
