@@ -1,0 +1,19 @@
+apiVersion: v2
+publisher: pizzafactory
+name: vscode-plantuml
+version: 2.13.12
+type: VS Code extension
+displayName: PlantUML
+title: PlantUML language Support
+description: Rich PlantUML support 
+icon: https://open-vsx.org/api/jebbs/plantuml/2.13.12/file/icon.png
+firstPublicationDate: "2020-09-19"
+category: Language
+repository: https://github.com/qjebbs/vscode-plantuml.git
+spec:
+  containers:
+    - image: "quay.io/eclipse/che-sidecar-node:12-026416c"
+      name: plantuml-lang
+      memoryLimit: "256Mi"
+  extensions:
+    - https://open-vsx.org/api/jebbs/plantuml/2.13.12/file/jebbs.plantuml-2.13.12.vsix
