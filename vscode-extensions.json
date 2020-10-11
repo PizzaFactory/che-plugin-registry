@@ -45,7 +45,7 @@
     },
     {
       "repository": "https://github.com/bmewburn/vscode-intelephense",
-      "revision": "v1.3.11",
+      "revision": "v1.5.4",
       "sidecar": {
         "image": "quay.io/eclipse/che-sidecar-php:7-9e9715e",
         "source": {
@@ -65,9 +65,9 @@
     },
     {
       "repository": "https://github.com/camel-tooling/vscode-camelk",
-      "revision": "0.0.16",
+      "revision": "0.0.17",
       "sidecar": {
-        "image": "quay.io/eclipse/che-sidecar-camelk:0.0.16-7d7538f",
+        "image": "quay.io/eclipse/che-sidecar-camelk:0.0.17-3d78c07",
         "source": {
           "repository": "https://github.com/che-dockerfiles/che-sidecar-camelk"
         }
@@ -99,6 +99,16 @@
       "revision": "2.1650-vsc1.39.2"
     },
     {
+      "repository": "https://github.com/dart-code/flutter",
+      "revision": "v3.14.1",
+      "sidecar": {
+        "image": "quay.io/eclipse/che-sidecar-flutter:3.14.1-54a951d",
+        "source": {
+          "repository": "https://github.com/che-dockerfiles/che-sidecar-flutter"
+        }
+      }
+    },
+    {
       "repository": "https://github.com/eamodio/vscode-gitlens",
       "revision": "v10.2.1"
     },
@@ -108,7 +118,7 @@
     },
     {
       "repository": "https://github.com/eclipse/che-che4z-lsp-for-cobol",
-      "revision": "0.13.0",
+      "revision": "0.15.0",
       "directory": "clients/cobol-lsp-vscode-extension/",
       "sidecar": {
         "image": "quay.io/eclipse/che-sidecar-java:11-7bd8c8c",
@@ -147,10 +157,20 @@
       }
     },
     {
+      "repository": "https://github.com/gattytto/Dart-Code",
+      "revision": "v3.15.0-che",
+      "sidecar": {
+        "image": "quay.io/eclipse/che-sidecar-dart:2.10-a2959e6",
+	"source": {
+	  "repository": "https://github.com/che-dockerfiles/che-sidecar-dart"
+	}
+      }	
+    },     
+    {
       "repository": "https://github.com/golang/vscode-go",
       "revision": "v0.16.1",
       "sidecar": {
-        "image": "quay.io/eclipse/che-sidecar-go:1.14.4-afebf70",
+        "image": "quay.io/eclipse/che-sidecar-go:1.14.4-3edc927",
         "source": {
           "repository": "https://github.com/che-dockerfiles/che-sidecar-go"
         }
@@ -172,7 +192,7 @@
     },
     {
       "repository": "https://github.com/microsoft/vscode-pull-request-github",
-      "revision": "v0.8.0"
+      "revision": "0.20.0"
     },
     {
       "repository": "https://github.com/Microsoft/vscode-python",
@@ -267,9 +287,9 @@
     },
     {
       "repository": "https://github.com/redhat-developer/vscode-openshift-tools",
-      "revision": "v0.1.5",
+      "revision": "v0.2.0",
       "sidecar": {
-        "image": "quay.io/eclipse/che-sidecar-openshift-connector:0.1.5-620dbc7",
+        "image": "quay.io/eclipse/che-sidecar-openshift-connector:0.2.0-6d2214b",
         "source": {
           "repository": "https://github.com/che-dockerfiles/che-sidecar-openshift-connector"
         }
@@ -355,7 +375,7 @@
       "repository": "https://github.com/testthedocs/vscode-vale",
       "revision": "0.9.1",
       "sidecar": {
-        "image": "quay.io/eclipse/che-sidecar-vale:0.9.1-ad53ccf",
+        "image": "quay.io/eclipse/che-sidecar-vale:0.9.1-04f254e",
         "source": {
           "repository": "https://github.com/che-dockerfiles/che-sidecar-vale"
         }
