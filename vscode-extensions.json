@@ -114,7 +114,7 @@
     },
     {
       "repository": "https://github.com/eclipse/che-che4z-explorer-for-endevor",
-      "revision": "0.10.0"
+      "revision": "0.11.0"
     },
     {
       "repository": "https://github.com/eclipse/che-che4z-lsp-for-cobol",
@@ -129,7 +129,7 @@
     },
     {
       "repository": "https://github.com/eclipse/che-che4z-lsp-for-hlasm",
-      "revision": "0.11.0",
+      "revision": "0.11.1",
       "directory": "clients/vscode-hlasmplugin/"
     },
     {
@@ -191,8 +191,12 @@
       "revision": "0.2.0"
     },
     {
-      "repository": "https://github.com/Microsoft/vscode-node-debug2",
-      "revision": "v1.42.3",
+      "repository": "https://github.com/microsoft/vscode-eslint",
+      "revision": "1e15d3495da89072d48cf583d48d92829f0c4b82"
+    },
+    {
+      "repository": "https://github.com/microsoft/vscode-node-debug2",
+      "revision": "v1.42.5",
       "sidecar": {
         "image": "quay.io/eclipse/che-sidecar-node:12-026416c",
         "source": {
@@ -205,7 +209,7 @@
       "revision": "0.20.0"
     },
     {
-      "repository": "https://github.com/Microsoft/vscode-python",
+      "repository": "https://github.com/microsoft/vscode-python",
       "revision": "2020.7.94776",
       "sidecar": {
         "image": "quay.io/eclipse/che-sidecar-python:3.8.6-5913fc2",
@@ -355,9 +359,9 @@
     },
     {
       "repository": "https://github.com/scalameta/metals-vscode",
-      "revision": "v1.9.4",
+      "revision": "v1.9.6",
       "sidecar": {
-        "image": "quay.io/eclipse/che-sidecar-scala:0.9.0-b92a5f9",
+        "image": "quay.io/eclipse/che-plugin-sidecar:scala-1be6877",
         "source": {
           "repository": "https://github.com/che-dockerfiles/che-sidecar-scala"
         }
@@ -376,10 +380,6 @@
           "repository": "https://github.com/che-dockerfiles/che-sidecar-sonarlint"
         }
       }
-    },
-    {
-      "repository": "https://github.com/spgennard/vscode_cobol",
-      "revision": "6.0.19"
     },
     {
       "repository": "https://github.com/testthedocs/vscode-vale",
