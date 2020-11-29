@@ -138,7 +138,7 @@
     },
     {
       "repository": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension",
-      "revision": "0.1.0",
+      "revision": "0.2.1",
       "sidecar": {
         "image": "quay.io/eclipse/che-sidecar-dependency-analytics:0.0.13-2f3b058",
         "source": {
@@ -407,7 +407,7 @@
     },
     {
       "repository": "https://github.com/windup/rhamt-vscode-extension",
-      "revision": "617222def40678e2ef375f713b969c93ea313a69"
+      "revision": "ece569b2a6222ee6b2a16ede8241e4817a574ea4"
     },
     {
       "repository": "https://github.com/zowe/vscode-extension-for-zowe",
