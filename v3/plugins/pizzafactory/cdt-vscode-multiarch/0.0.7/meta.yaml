@@ -8,7 +8,7 @@ title: Cross C/C++ intelliSense, debugging and code browsing
 description: Cross C/C++ intelliSense, debugging and code browsing
 icon: https://raw.githubusercontent.com/eclipse-cdt/cdt-vscode/master/images/cdt_logo.png
 repository: https://github.com/eclipse-cdt/cdt-vscode
-category: Language
+category: Programming Languages
 firstPublicationDate: '2020-09-10'
 spec:
   containers:

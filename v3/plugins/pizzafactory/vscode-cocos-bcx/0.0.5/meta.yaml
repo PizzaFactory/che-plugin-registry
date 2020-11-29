@@ -8,7 +8,7 @@ title: Cocos-BCX Support
 description: Cocos-BCX Smart Contract Snippets. Packaging by PizzaFactory.
 icon: https://commons.wikimedia.org/wiki/File:Libra_logo_icon.svg
 firstPublicationDate: "2019-09-24"
-category: Language
+category: Programming Languages
 repository: https://github.com/pizzafactory-contorno/vscode-cocos-bcx
 spec:
   containers:
