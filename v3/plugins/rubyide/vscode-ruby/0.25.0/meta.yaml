@@ -8,7 +8,7 @@ title: Ruby intelliSense, debugging and code browsing
 description: Ruby intelliSense, debugging and code browsing
 icon: https://upload.wikimedia.org/wikipedia/commons/7/73/Ruby_logo.svg
 repository: https://github.com/rubyide/vscode-ruby
-category: Language
+category: Programming Languages
 firstPublicationDate: '2020-08-08'
 spec:
   containers:
