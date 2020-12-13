@@ -18,7 +18,7 @@ metadata:
     kubernetes.io/ingress.class: {{ .Values.global.ingress.class }}
 spec:
   rules:
-  - host: {{ template "hostname" . -}} . {{- .Values.global.ingressDomain }}
+  - host: {{ template "pluginRegistryHost" . }}
     http:
       paths:
       - path: /
@@ -28,6 +28,6 @@ spec:
 {{- if .Values.chePluginRegistryIngressSecretName }}
   tls:
   - hosts:
-    - {{ template "hostname" . -}} . {{- .Values.global.ingressDomain }}
+    - {{ template "pluginRegistryHost" . }}
     secretName: {{ .Values.chePluginRegistryIngressSecretName }}
 {{- end -}}
