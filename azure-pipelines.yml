@@ -4,15 +4,15 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- azure-pipelines
+  - azure-pipelines
 
 schedules:
-- cron: "20 12 * * *"
-  displayName: Daily build
-  branches:
-    include:
-    - azure-pipelines
-  always: true
+  - cron: "20 12 * * *"
+    displayName: Daily build
+    branches:
+      include:
+        - azure-pipelines
+    always: true
 
 variables:
   containerRegistry: camino.azurecr.io
@@ -22,27 +22,71 @@ variables:
 pool:
   vmImage: 'Ubuntu-16.04'
 
-steps:
-- script: ./build.sh -r $(containerRegistry) -o $(organization) -t $(tag)
-  displayName: 'docker build'
+jobs:
+  - job: build
+    steps:
+      - script: ./build.sh -r $(containerRegistry) -o $(organization) -t $(tag)
+        displayName: 'docker build'
 
-- task: Docker@1
-  inputs:
-    command: login
-    containerregistrytype: Container Registry
-    dockerRegistryEndpoint: camino.azurecr.io
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
+      - task: Docker@1
+        inputs:
+          command: login
+          containerregistrytype: Container Registry
+          dockerRegistryEndpoint: camino.azurecr.io
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
 
-- script: |
-    docker push $(containerRegistry)/$(organization)/che-plugin-registry:$(tag)
-  displayName: 'docker push'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
+      - script: |
+          docker push $(containerRegistry)/$(organization)/che-plugin-registry:$(tag)
+        displayName: 'docker push'
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
 
-- task: AzureCLI@2
-  displayName: 'Image imports'
-  inputs:
-    azureSubscription: 'camino: BizSpark (1fbdb4bb-441e-4922-ba1f-ffd04f533ea1)'
-    scriptType: bash
-    scriptLocation: inlineScript
-    inlineScript: 'grep -r image: v3 | grep -v registry.access.redhat.com | awk ''!/camino/ { print $NF }'' | sort | uniq | awk ''{ print "az acr import --force --name camino --source " $NF}'' | sh -x'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
+  - job: sync_in_v3
+    steps:
+      - task: Docker@1
+        inputs:
+          command: login
+          containerregistrytype: Container Registry
+          dockerRegistryEndpoint: camino.azurecr.io
+
+      - task: AzureCLI@2
+        displayName: 'Image imports'
+        inputs:
+          azureSubscription: 'camino: BizSpark (1fbdb4bb-441e-4922-ba1f-ffd04f533ea1)'
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: 'grep -r image: v3 | grep -v registry.access.redhat.com | awk ''!/camino/ { print $NF }'' | sort | uniq | awk ''{ print "az acr import --force --name camino --source " $NF}'' | sh -x'
+    condition: and(succeeded('build'), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
+
+  - job: sync_in_yaml
+    steps:
+      - task: Docker@1
+        inputs:
+          command: login
+          containerregistrytype: Container Registry
+          dockerRegistryEndpoint: camino.azurecr.io
+
+      - task: AzureCLI@2
+        displayName: 'Image imports'
+        inputs:
+          azureSubscription: 'camino: BizSpark (1fbdb4bb-441e-4922-ba1f-ffd04f533ea1)'
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: 'grep image: che-theia-plugins.yaml | grep -v registry.access.redhat.com | awk ''!/camino/ { print $NF }'' | sort | uniq | awk ''{ print "az acr import --force --name camino --source " $NF}'' | sh -x'
+    condition: and(succeeded('build'), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
+
+  - job: sync_in_quay
+    steps:
+      - task: Docker@1
+        inputs:
+          command: login
+          containerregistrytype: Container Registry
+          dockerRegistryEndpoint: camino.azurecr.io
+
+      - task: AzureCLI@2
+        displayName: 'Image imports'
+        inputs:
+          azureSubscription: 'camino: BizSpark (1fbdb4bb-441e-4922-ba1f-ffd04f533ea1)'
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: 'curl https://quay.io/api/v1/repository/eclipse/che-plugin-sidecar/tag/ | jq -r ''.tags[].name'' | sort | uniq | awk ''{ print "az acr import --force --name camino --source quay.io/eclipse/che-plugin-sidecar:" $NF}'' | sh -x'
+    condition: and(succeeded('build'), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
