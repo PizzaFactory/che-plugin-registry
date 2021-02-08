@@ -91,5 +91,5 @@ jobs:
           azureSubscription: 'camino: BizSpark (1fbdb4bb-441e-4922-ba1f-ffd04f533ea1)'
           scriptType: bash
           scriptLocation: inlineScript
-          inlineScript: 'for i in 1 2 3; do curl "https://quay.io/api/v1/repository/eclipse/che-plugin-sidecar/tag/?limit=100&page=$i" | jq -r ''.tags[].name'' | sort | uniq | awk ''{ print "az acr import --name camino --source quay.io/eclipse/che-plugin-sidecar:" $NF}''; done | sh -x'
+          inlineScript: 'for i in 1 2 3; do curl "https://quay.io/api/v1/repository/eclipse/che-plugin-sidecar/tag/?limit=100&page=$i" | jq -r ''.tags[].name'' | sort | uniq | awk ''{ print "az acr repository show --name camino --image eclipse/che-plugin-sidecar:" $NF; print "if [ $? -ne 0 ]; then az acr import --name camino --source quay.io/eclipse/che-plugin-sidecar:" $NF "; fi"}''; done | sh -x'
     condition: and(succeeded('build'), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines'))
