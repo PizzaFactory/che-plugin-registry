@@ -76,8 +76,8 @@ commitChangeOrCreatePR()
     fi
 
     # commit change into branch
-    git add v3/plugins/eclipse/ || true
-    git commit -s -m "${COMMIT_MSG}" VERSION v3/plugins/eclipse/
+    git add -A || true
+    git commit -s -m "${COMMIT_MSG}"
     git pull origin "${aBRANCH}"
 
     PUSH_TRY="$(git push origin "${aBRANCH}")"
@@ -96,27 +96,29 @@ ${lastCommitComment}" -b "${aBRANCH}" -h "${PR_BRANCH}"
   fi
 }
 
-# generate new meta.yaml files for the plugins, and update the latest.txt files; also update the VERSION file
+# generate new meta.yaml files for the plugins, and update the che-plugins.yaml, che-editors.yaml; also update the VERSION file
 createNewPlugins () {
   newVERSION="$1"
-  thisVERSION="$2" # if false, don't update latest.txt and VERSION file; otherwise use this value in VERSION file and use newVERSION in latest.txt
-  rsync -aPrz v3/plugins/eclipse/che-machine-exec-plugin/nightly/* "v3/plugins/eclipse/che-machine-exec-plugin/${newVERSION}/"
-  rsync -aPrz v3/plugins/eclipse/che-theia/next/* "v3/plugins/eclipse/che-theia/${newVERSION}/"
+  thisVERSION="$2" # if false, don't update che-plugins.yaml, che-editors.yaml and VERSION file; otherwise use this value in VERSION, and new version in che-plugins.yaml and che-editors.yaml 
   pwd
-  for m in "v3/plugins/eclipse/che-theia/${newVERSION}/meta.yaml" "v3/plugins/eclipse/che-machine-exec-plugin/${newVERSION}/meta.yaml"; do
-    sed -i "${m}" \
-        -e "s#firstPublicationDate:.\+#firstPublicationDate: \"$(date +%Y-%m-%d)\"#" \
-        -e "s#version: \(nightly\|next\)#version: ${newVERSION}#" \
-        -e "s#image: \"\(.\+\):\(nightly\|next\)\"#image: \"\1:${newVERSION}\"#" \
-        -e "s# development version\.##" \
-        -e "s#, get the latest release each day\.##"
-  done
 
-  # for .0 releases (master and .x branch) update in both branches
-  # for .z releases, latest files should be updated in both branch
-  for m in v3/plugins/eclipse/che-theia/latest.txt v3/plugins/eclipse/che-machine-exec-plugin/latest.txt; do
-    echo "${newVERSION}" > $m
-  done
+  # First bump id and image fields for che-machine-exec in che-plugins.yaml
+  cheMachineExec="eclipse/che-machine-exec"
+  sed -i "che-plugins.yaml" \
+      -e "s#id: ${cheMachineExec}-plugin/\([0-9]\+\.[0-9]\+\.[0-9]\+\)#id: ${cheMachineExec}-plugin/${newVERSION}#"
+  sed -i "che-plugins.yaml" \
+      -e "s#image: \(['\"]*\)quay.io/${cheMachineExec}:\([0-9]\+\.[0-9]\+\.[0-9]\+\)\1#image: \1quay.io/${cheMachineExec}:${newVERSION}\1#"
+
+  # Now do che-theia in che-editors.yaml
+  cheTheia="eclipse/che-theia"
+  cheTheiaEndpointRuntimeBinary="${cheTheia}-endpoint-runtime-binary"
+  sed -i "che-editors.yaml" \
+      -e "s#id: ${cheTheia}/\([0-9]\+\.[0-9]\+\.[0-9]\+\)#id: ${cheTheia}/${newVERSION}#"
+  sed -i "che-editors.yaml" \
+      -e "s#image: \(['\"]*\)quay.io/${cheTheia}:\([0-9]\+\.[0-9]\+\.[0-9]\+\)\1#image: \1quay.io/${cheTheia}:${newVERSION}\1#"
+  sed -i "che-editors.yaml" \
+      -e "s#image: \(['\"]*\)quay.io/${cheTheiaEndpointRuntimeBinary}:\([0-9]\+\.[0-9]\+\.[0-9]\+\)\1#image: \1quay.io/${cheTheiaEndpointRuntimeBinary}:${newVERSION}\1#"
+
   # for .z releases, VERSION files should not be updated in master branch (only in .z branch)
   if [[ ${thisVERSION} != "false" ]]; then
     # update VERSION file with VERSION or NEWVERSION
@@ -124,7 +126,7 @@ createNewPlugins () {
   fi
 }
 
-# add new plugins + update latest.txt files, and bump VERSION file to VERSION
+# add new plugins + update che-editors.yaml, che-plugins.yaml files, and bump VERSION file to VERSION
 createNewPlugins "${VERSION}" "${VERSION}"
 
 # commit change into branch
@@ -156,7 +158,7 @@ else
   NEXTVERSION="${BASE}.${NEXT}-SNAPSHOT"
 fi
 
-# add new plugins + update latest.txt files, and bump VERSION file to NEXTVERSION
+# add new plugins + update che-editors.yaml, che-plugins.yaml, and bump VERSION file to NEXTVERSION
 createNewPlugins "${VERSION}" "${NEXTVERSION}"
 commitChangeOrCreatePR "${NEXTVERSION}" "${BASEBRANCH}" "pr-${BASEBRANCH}-to-${NEXTVERSION}"
 
@@ -164,7 +166,7 @@ commitChangeOrCreatePR "${NEXTVERSION}" "${BASEBRANCH}" "pr-${BASEBRANCH}-to-${N
 if [[ ${BASEBRANCH} != "master" ]]; then
   fetchAndCheckout "master"
 
-  # add new plugins + update latest.txt files; do not update VERSION file in master
+  # add new plugins + update che-editors.yaml, che-plugins.yaml files; do not update VERSION file in master
   createNewPlugins "${VERSION}" false
   commitChangeOrCreatePR "${VERSION}" "master" "pr-add-${VERSION}-plugins-to-master"
 fi

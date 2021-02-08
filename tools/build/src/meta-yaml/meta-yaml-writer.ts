@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2020 Red Hat, Inc.
+ * Copyright (c) 2020-2021 Red Hat, Inc.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -10,17 +10,22 @@
 
 import * as fs from 'fs-extra';
 import * as jsyaml from 'js-yaml';
+import * as moment from 'moment';
 import * as path from 'path';
 
 import { inject, injectable, named } from 'inversify';
 
-import { MetaYamlPluginInfo } from './meta-yaml-generator';
+import { MetaYamlPluginInfo } from './meta-yaml-plugin-info';
 
 @injectable()
 export class MetaYamlWriter {
   @inject('string')
   @named('OUTPUT_ROOT_DIRECTORY')
   private outputRootDirectory: string;
+
+  @inject('boolean')
+  @named('EMBED_VSIX')
+  private embedVsix: boolean;
 
   public static readonly DEFAULT_ICON = '/v3/images/eclipse-che-logo.png';
 
@@ -29,22 +34,25 @@ export class MetaYamlWriter {
     return [values[0], values[1]];
   }
 
-  async write(metaYamlPluginInfos: MetaYamlPluginInfo[]): Promise<void> {
+  async write(metaYamlPluginInfos: MetaYamlPluginInfo[]): Promise<MetaYamlPluginInfo[]> {
     // now, write the files
     const pluginsFolder = path.resolve(this.outputRootDirectory, 'v3', 'plugins');
     await fs.ensureDir(pluginsFolder);
     const imagesFolder = path.resolve(this.outputRootDirectory, 'v3', 'images');
     await fs.ensureDir(imagesFolder);
+    const resourcesFolder = path.resolve(this.outputRootDirectory, 'v3', 'resources');
+    await fs.ensureDir(resourcesFolder);
 
     const apiVersion = 'v2';
-    const type = 'VS Code extension';
 
+    const metaYamlPluginGenerated: MetaYamlPluginInfo[] = [];
     await Promise.all(
       metaYamlPluginInfos.map(async plugin => {
         const id = plugin.id;
-        const version = plugin.version;
+        let version = plugin.version;
         const name = plugin.name;
         const publisher = plugin.publisher;
+        const type = plugin.type;
 
         // write icon if iconfFile is specified or use default icon
         let icon: string;
@@ -58,14 +66,46 @@ export class MetaYamlWriter {
         } else {
           icon = MetaYamlWriter.DEFAULT_ICON;
         }
+
+        // copy vsix for offline storage
+        if (this.embedVsix) {
+          // need to write vsix file downloaded
+          if (plugin.spec && plugin.spec.extensions) {
+            await Promise.all(
+              plugin.spec.extensions.map(async (extension, index) => {
+                const vsixInfo = plugin.vsixInfos.get(extension);
+                if (vsixInfo && vsixInfo.downloadedArchive) {
+                  const directoryPattern = path
+                    .dirname(extension)
+                    .replace('http://', '')
+                    .replace('https://', '')
+                    .replace(/[^a-zA-Z0-9-/]/g, '_');
+                  const filePattern = path.basename(extension);
+                  const destFolder = path.join(resourcesFolder, directoryPattern);
+                  const destFile = path.join(destFolder, filePattern);
+                  await fs.ensureDir(destFolder);
+                  await fs.copyFile(vsixInfo.downloadedArchive, destFile);
+                  plugin.spec.extensions[index] = `relative:extension/resources/${directoryPattern}/${filePattern}`;
+                }
+              })
+            );
+          }
+        }
+
         const displayName = plugin.displayName;
         const title = plugin.title;
         const description = plugin.description;
         const category = plugin.category;
         const repository = plugin.repository;
         const firstPublicationDate = plugin.firstPublicationDate;
+        const latestUpdateDate = moment.utc().format('YYYY-MM-DD');
         const spec = plugin.spec;
-        const aliases = plugin.aliases;
+        let aliases: string[];
+        if (plugin.aliases) {
+          aliases = plugin.aliases;
+        } else {
+          aliases = [];
+        }
 
         // generate for the id and for all aliases
         const pluginsToGenerate = [
@@ -73,47 +113,56 @@ export class MetaYamlWriter {
           ...aliases.map(item => this.convertIdToPublisherAndName(item)),
         ];
         const promises: Promise<unknown>[] = [];
-        pluginsToGenerate.map(async pluginToWrite => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const metaYaml: any = {
-            apiVersion,
-            publisher: pluginToWrite[0],
-            name: pluginToWrite[1],
-            version,
-            type,
-            displayName,
-            title,
-            description,
-            icon,
-            category,
-            repository,
-            firstPublicationDate,
-          };
+        await Promise.all(
+          pluginsToGenerate.map(async pluginToWrite => {
+            // replace the version number by latest
+            if (!plugin.disableLatest) {
+              version = 'latest';
+            }
 
-          const computedId = `${metaYaml.publisher}/${metaYaml.name}`;
-
-          // add deprecate/migrate info if it is an alias
-          if (computedId !== id) {
-            metaYaml.deprecate = {
-              automigrate: true,
-              migrateTo: `${id}/latest`,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const metaYaml: any = {
+              apiVersion,
+              publisher: pluginToWrite[0],
+              name: pluginToWrite[1],
+              version,
+              type,
+              displayName,
+              title,
+              description,
+              icon,
+              category,
+              repository,
+              firstPublicationDate,
+              latestUpdateDate,
             };
-          }
 
-          // add spec object
-          metaYaml.spec = spec;
+            const computedId = `${metaYaml.publisher}/${metaYaml.name}`;
 
-          const yamlString = jsyaml.safeDump(metaYaml, { lineWidth: 120 });
+            // add deprecate/migrate info if it is an alias
+            if (computedId !== id) {
+              metaYaml.deprecate = {
+                automigrate: true,
+                migrateTo: `${id}/latest`,
+              };
+            }
 
-          const pluginPath = path.resolve(pluginsFolder, computedId, version, 'meta.yaml');
-          const latestPath = path.resolve(pluginsFolder, computedId, 'latest.txt');
+            // add spec object
+            metaYaml.spec = spec;
+            const yamlString = jsyaml.safeDump(metaYaml, { lineWidth: 120 });
+            const generated = { ...metaYaml };
+            generated.id = `${computedId}/${version}`;
+            metaYamlPluginGenerated.push(generated);
 
-          await fs.ensureDir(path.dirname(pluginPath));
-          promises.push(fs.writeFile(pluginPath, yamlString));
-          promises.push(fs.writeFile(latestPath, `${version}\n`));
-        });
+            const pluginPath = path.resolve(pluginsFolder, computedId, version, 'meta.yaml');
+
+            await fs.ensureDir(path.dirname(pluginPath));
+            promises.push(fs.writeFile(pluginPath, yamlString));
+          })
+        );
         return Promise.all(promises);
       })
     );
+    return metaYamlPluginGenerated;
   }
 }
