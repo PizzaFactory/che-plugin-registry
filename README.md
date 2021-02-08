@@ -1,15 +1,15 @@
-[![CircleCI](https://circleci.com/gh/eclipse/che-plugin-registry.svg?style=svg)](https://circleci.com/gh/eclipse/che-plugin-registry)
-[![Master Build Status](https://ci.centos.org/buildStatus/icon?subject=master&job=devtools-che-plugin-registry-build-master/)](https://ci.centos.org/job/devtools-che-plugin-registry-build-master/)
-[![Nightly Build Status](https://ci.centos.org/buildStatus/icon?subject=nightly&job=devtools-che-plugin-registry-nightly/)](https://ci.centos.org/job/devtools-che-plugin-registry-nightly/)
-[![Release Build Status](https://ci.centos.org/buildStatus/icon?subject=release&job=devtools-che-plugin-registry-release/)](https://ci.centos.org/job/devtools-che-plugin-registry-release/)
-[![Release Preview Build Status](https://ci.centos.org/buildStatus/icon?subject=release-preview&job=devtools-che-plugin-registry-release-preview/)](https://ci.centos.org/job/devtools-che-plugin-registry-release-preview/)
+[![codecov](https://img.shields.io/codecov/c/github/eclipse/che-plugin-registry)](https://codecov.io/gh/eclipse/che-plugin-registry)
 
-# Eclipse Che plugin registry
+# Eclipse Che Plugin Registry
 
-This repository holds ready-to-use plugins for different languages and technologies.
+This repository holds ready-to-use plugins for different languages and technologies. A [nightly build](https://che-plugin-registry-main.surge.sh/) of this registry is published on surge.sh.
 
 ## Building and publishing third party VSIX extensions for plugin registry
 See: https://github.com/redhat-developer/codeready-workspaces/blob/master/devdoc/building/build-vsix-extension.adoc
+
+
+## Prerequisites
+ - nodejs 12.x and yarn v1
 
 ## Build registry container image
 
@@ -25,16 +25,21 @@ Options:
         Docker registry to be used for image; default 'quay.io'
     --organization, -o [ORGANIZATION]
         Docker image organization to be used for image; default: 'eclipse'
-    --latest-only
-        Build registry to only contain 'latest' meta.yamls; default: 'false'
     --offline
         Build offline version of registry, with all artifacts included
         cached in the registry; disabled by default.
     --rhel
-        Build using the rhel.Dockerfile (UBI images) instead of default
+        Build using the rhel.Dockerfile (UBI images) instead of Alpine
+    --skip-oci-image
+        Build artifacts but do not create the image        
 ```
 
-Note that the Dockerfiles in this repository utilize multi-stage builds, so Docker version 17.05 or higher is required.
+This script listens to the `BUILDER` variable, and will use the tool specified there to build the image. For example:
+```sh
+BUILDER=buildah ./build.sh
+```
+
+will force the build to use `buildah`. If `BUILDER` is not specified, the script will try to use `podman` by default. If `podman` is not installed, then `buildah` will be chosen. If neither `podman` nor `buildah` are installed, the script will finally try to build with `docker`.
 
 ### Offline and airgapped registry images
 
