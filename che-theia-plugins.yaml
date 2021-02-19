@@ -312,7 +312,7 @@ plugins:
           path: /home/theia/.kube
     extensions:
       - >-
-        https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-openshift-tools/vscode-openshift-connector-0.2.0.vsix
+        https://open-vsx.org/api/redhat/vscode-openshift-connector/0.2.0/file/redhat.vscode-openshift-connector-0.2.0.vsix
       - >-
         https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-kubernetes-tools/vscode-kubernetes-tools-1.1.0.vsix
       - >-
@@ -392,7 +392,7 @@ plugins:
         https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-php-debug/php-debug-1.13.0.vsix
   - repository:
       url: 'https://github.com/windup/rhamt-vscode-extension'
-      revision: 1fa3f3f9f597aa7d370da61dafbe5dc7899aba52
+      revision: a03a76e372f70deaa68743e400a4e7e18e5eb221
     aliases:
       - redhat/mta
     sidecar:
@@ -418,7 +418,7 @@ plugins:
             protocol: http
     extensions:
       - >-
-        https://download.jboss.org/jbosstools/vscode/stable/mta-vscode-extension/mta-vscode-extension-0.0.61-40.vsix
+        https://download.jboss.org/jbosstools/vscode/stable/mta-vscode-extension/mta-vscode-extension-0.0.63-49.vsix
   - repository:
       url: 'https://github.com/camel-tooling/camel-lsp-client-vscode'
       revision: 0.0.30
@@ -693,6 +693,18 @@ plugins:
     extensions:
       - >-
         https://github.com/che-incubator/vscode-emacs-friendly/releases/download/0.9.0/lfs.vscode-emacs-friendly-0.9.0.vsix
+  - repository:
+      url: https://github.com/castwide/vscode-solargraph
+      revision: 212e76d
+    sidecar:
+      directory: ruby
+      name: vscode-ruby
+      memoryLimit: "1500Mi"
+      volumeMounts:
+        - name: solargraph
+          path: "/home/theia/.solargraph"
+    extensions:
+      - https://open-vsx.org/api/castwide/solargraph/0.22.0/file/castwide.solargraph-0.22.0.vsix
   - repository:
       url: 'https://github.com/zowe/vscode-extension-for-zowe'
       revision: v1.11.0
