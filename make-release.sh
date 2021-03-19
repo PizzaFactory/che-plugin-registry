@@ -6,12 +6,14 @@
 # set to 1 to actually trigger changes in the release branch
 TRIGGER_RELEASE=0 
 NOCOMMIT=0
+TMP=""
+REPO=git@github.com:eclipse/che-plugin-registry
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     '-t'|'--trigger-release') TRIGGER_RELEASE=1; NOCOMMIT=0; shift 0;;
-    '-r'|'--repo') REPO="$2"; shift 1;;
     '-v'|'--version') VERSION="$2"; shift 1;;
+    '-tmp'|'--use-tmp-dir') TMP=$(mktemp -d); shift 0;;
     '-n'|'--no-commit') NOCOMMIT=1; TRIGGER_RELEASE=0; shift 0;;
   esac
   shift 1
@@ -19,11 +21,21 @@ done
 
 usage ()
 {
-  echo "Usage: $0 --repo [GIT REPO TO EDIT] --version [VERSION TO RELEASE] [--trigger-release]"
-  echo "Example: $0 --repo git@github.com:eclipse/che-subproject --version 7.7.0 --trigger-release"; echo
+  echo "Usage: $0  --version [VERSION TO RELEASE] [--trigger-release]"
+  echo "Example: $0 --version 7.27.0 --trigger-release"; echo
 }
 
-if [[ ! ${VERSION} ]] || [[ ! ${REPO} ]]; then
+performRelease() 
+{
+  SHORT_SHA1=$(git rev-parse --short HEAD)
+  VERSION=$(head -n 1 VERSION)
+  BUILDER=docker SKIP_FORMAT=true SKIP_LINT=true SKIP_TEST=true ./build.sh --tag "${VERSION}"
+  docker tag quay.io/eclipse/che-plugin-registry:"${VERSION}" quay.io/eclipse/che-plugin-registry:"${SHORT_SHA1}"
+  docker push quay.io/eclipse/che-plugin-registry:"${SHORT_SHA1}"
+  docker push quay.io/eclipse/che-plugin-registry:"${VERSION}"
+}
+
+if [[ ! ${VERSION} ]]; then
   usage
   exit 1
 fi
@@ -44,13 +56,14 @@ fetchAndCheckout ()
   git fetch origin "${bBRANCH}:${bBRANCH}"; git checkout "${bBRANCH}"
 }
 
-# work in tmp dir
-TMP=$(mktemp -d); pushd "$TMP" > /dev/null || exit 1
-
-# get sources from ${BASEBRANCH} branch
-echo "Check out ${REPO} to ${TMP}/${REPO##*/}"
-git clone "${REPO}" -q
-cd "${REPO##*/}" || exit 1
+# work in tmp dir if --use-tmp-dir (not required when running as GH action)
+if [[ $TMP ]] && [[ -d $TMP ]]; then 
+  pushd "$TMP" > /dev/null || exit 1
+  # get sources from ${BASEBRANCH} branch
+  echo "Check out ${REPO} to ${TMP}/${REPO##*/}"
+  git clone "${REPO}" -q
+  cd "${REPO##*/}" || true
+fi
 fetchAndCheckout "${BASEBRANCH}"
 
 # create new branch off ${BASEBRANCH} (or check out latest commits if branch already exists), then push to origin
@@ -89,9 +102,7 @@ commitChangeOrCreatePR()
       git pull origin "${PR_BRANCH}"
       git push origin "${PR_BRANCH}"
       lastCommitComment="$(git log -1 --pretty=%B)"
-      hub pull-request -f -m "${lastCommitComment}
-
-${lastCommitComment}" -b "${aBRANCH}" -h "${PR_BRANCH}"
+      hub pull-request -f -m "${lastCommitComment}" -b "${aBRANCH}" -h "${PR_BRANCH}"
     fi
   fi
 }
@@ -102,11 +113,13 @@ createNewPlugins () {
   thisVERSION="$2" # if false, don't update che-plugins.yaml, che-editors.yaml and VERSION file; otherwise use this value in VERSION, and new version in che-plugins.yaml and che-editors.yaml 
   pwd
 
-  # First bump id and image fields for che-machine-exec in che-plugins.yaml
+  # First bump id and image fields for che-machine-exec in che-plugins.yaml and che-editors.yaml
   cheMachineExec="eclipse/che-machine-exec"
   sed -i "che-plugins.yaml" \
       -e "s#id: ${cheMachineExec}-plugin/\([0-9]\+\.[0-9]\+\.[0-9]\+\)#id: ${cheMachineExec}-plugin/${newVERSION}#"
   sed -i "che-plugins.yaml" \
+      -e "s#image: \(['\"]*\)quay.io/${cheMachineExec}:\([0-9]\+\.[0-9]\+\.[0-9]\+\)\1#image: \1quay.io/${cheMachineExec}:${newVERSION}\1#"
+  sed -i "che-editors.yaml" \
       -e "s#image: \(['\"]*\)quay.io/${cheMachineExec}:\([0-9]\+\.[0-9]\+\.[0-9]\+\)\1#image: \1quay.io/${cheMachineExec}:${newVERSION}\1#"
 
   # Now do che-theia in che-editors.yaml
@@ -135,8 +148,7 @@ commitChangeOrCreatePR "${VERSION}" "${BRANCH}" "pr-${BRANCH}-to-${VERSION}"
 if [[ $TRIGGER_RELEASE -eq 1 ]]; then
   # push new branch to release branch to trigger CI build
   fetchAndCheckout "${BRANCH}"
-  git branch release -f 
-  git push origin release -f
+  performRelease
 
   # tag the release
   git checkout "${BRANCH}"
@@ -171,7 +183,8 @@ if [[ ${BASEBRANCH} != "master" ]]; then
   commitChangeOrCreatePR "${VERSION}" "master" "pr-add-${VERSION}-plugins-to-master"
 fi
 
-popd > /dev/null || exit
-
 # cleanup tmp dir
-cd /tmp && rm -fr "$TMP"
+if [[ $TMP ]] && [[ -d $TMP ]]; then
+  popd >/dev/null || true
+  rm -fr "$TMP"
+fi
