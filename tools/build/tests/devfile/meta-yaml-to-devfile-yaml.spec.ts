@@ -44,13 +44,15 @@ describe('Test MetaYamlToDevfileYaml', () => {
     expect(component.name).toBe('che-machine-exec');
     const componentContainer = component.container;
     expect(componentContainer.image).toBe('quay.io/eclipse/che-machine-exec:nightly');
-    expect(componentContainer.args).toStrictEqual(['/go/bin/che-machine-exec', '--url', '0.0.0.0:4444']);
+    expect(componentContainer.command).toStrictEqual(['/go/bin/che-machine-exec', '--url', '0.0.0.0:4444']);
 
     expect(componentContainer.endpoints).toBeDefined();
-    expect(componentContainer.endpoints?.length).toBe(1);
+    expect(componentContainer.endpoints?.length).toBe(2);
     const endpoint = componentContainer.endpoints[0];
     expect(endpoint.name).toBe('che-machine-exec');
     expect(endpoint.exposure).toBe('public');
+    expect(endpoint.secure).toBe(false);
+    expect(endpoint.protocol).toBe('wss');
     const endpointAttributes = endpoint.attributes;
     expect(endpointAttributes.type).toBe('terminal');
   });
@@ -178,6 +180,8 @@ describe('Test MetaYamlToDevfileYaml', () => {
     expect(component.name).toBe('minimal-endpoint');
     const componentContainer = component.container;
     expect(componentContainer.image).toBe('quay.io/minimal-endpoint');
+    expect(componentContainer.command).toStrictEqual(['foo']);
+    expect(componentContainer.args).toStrictEqual(['bar']);
 
     expect(componentContainer.endpoints).toBeDefined();
     expect(componentContainer.endpoints?.length).toBe(1);

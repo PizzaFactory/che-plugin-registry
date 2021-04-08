@@ -30,6 +30,13 @@ Here are all the supported values, including optional ones:
     # (OPTIONAL) An alias for this plugin: this means anything listed here will get its own meta.yaml generated
     aliases:
       - redhat/java
+    # (OPTIONAL) plug-in preferences in freeform format
+    preferences:
+      # name of the preference with it's value, example:
+      asciidoc.use_asciidoctorpdf: true
+      shellcheck.executablePath: /bin/shellcheck
+      solargraph.bundlerPath: /usr/local/bin/bundle
+      solargraph.commandPath: /usr/local/bundle/bin/solargraph
     # (OPTIONAL) If the plugin runs in a sidecar, then the sidecar information is specified here
     sidecar:
       # Directory where the Dockerfile that builds this extension is located
@@ -290,7 +297,7 @@ All sidecar definitions are located in the `sidecars/` directory of this reposit
 There are three things needed when contributing a sidecar:
 * The `Dockerfile` that builds the container image
 * A `PLATFORMS` file which lists all the architectures your container will be built for
-* An entrypoint script, which allows your sidecar image to be used in Che. Here is an [example](https://github.com/eclipse/che-plugin-registry/blob/master/sidecars/node/etc/entrypoint.sh) of such a script. The script needs to be included in the sidecar directory, and also be added to the `Dockerfile` via the `ADD` instruction. Additional scripts may also be contributed and added.
+* An entrypoint script, which allows your sidecar image to be used in Che. Here is an [example](https://github.com/eclipse-che/che-plugin-registry/blob/master/sidecars/node/etc/entrypoint.sh) of such a script. The script needs to be included in the sidecar directory, and also be added to the `Dockerfile` via the `ADD` instruction. Additional scripts may also be contributed and added.
 
 ### Contribution Flow
 At this time, updating/adding a new plugin and sidecar requires two PRs.
@@ -299,7 +306,7 @@ At this time, updating/adding a new plugin and sidecar requires two PRs.
 1. Make the changes necessary to add the sidecar, or update an existing one.
 2. Open a PR with the changes.
 3. A PR check will run to validate that the sidecar builds. Reviewers will then review the PR.
-4. When the PR is merged, a CI job will build the image, and push it to `quay.io/eclipse/che-plugin-sidecar`. Such CI jobs run via GitHub action and can be monitored [here](https://github.com/eclipse/che-plugin-registry/actions).
+4. When the PR is merged, a CI job will build the image, and push it to `quay.io/eclipse/che-plugin-sidecar`. Such CI jobs run via GitHub action and can be monitored [here](https://github.com/eclipse-che/che-plugin-registry/actions).
 
 The resulting image built and pushed via GitHub action will be named according to the directory name, and the shortened commit hash that last changed its definition. For example, if commit `b8f0528` was a change made to the `java` sidecar, then the resulting image from that change will be named `java-b8f0528`. You can check for new images by checking the [quay.io web interface](https://quay.io/repository/eclipse/che-plugin-sidecar?tag=latest&tab=tags), or by checking the console log of the GitHub action job that built and pushed the image.
 

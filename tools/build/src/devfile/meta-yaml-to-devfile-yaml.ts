@@ -27,7 +27,10 @@ export class MetaYamlToDevfileYaml {
       },
     };
     if (container.command) {
-      component.container.args = container.command;
+      component.container.command = container.command;
+    }
+    if (container.args) {
+      component.container.args = container.args;
     }
     if (container.env) {
       component.container.env = container.env;
@@ -112,10 +115,14 @@ export class MetaYamlToDevfileYaml {
           devfileEndpoint.exposure = 'public';
         }
 
-        // if it's secured, remove secure option for now
+        // if it's secured, remove secure option for now but add extra s on the protocol
         if (devfileEndpoint.attributes && devfileEndpoint.attributes.secure === true) {
           devfileEndpoint.secure = false;
           delete devfileEndpoint.attributes['secure'];
+          // add extra s
+          if (devfileEndpoint.attributes.protocol) {
+            devfileEndpoint.attributes.protocol = `${devfileEndpoint.attributes.protocol}s`;
+          }
         }
 
         // move protocol upper than inside attributes

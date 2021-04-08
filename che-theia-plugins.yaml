@@ -17,6 +17,8 @@ plugins:
   - repository:
       url: 'https://github.com/Microsoft/vscode-node-debug2'
       revision: v1.42.5
+    preferences:
+      debug.node.useV3: false
     sidecar:
       directory: node
       name: vscode-node-debug
@@ -140,6 +142,8 @@ plugins:
     extensions:
       - >-
         https://github.com/redhat-developer/codeready-workspaces-vscode-extensions/releases/download/v2249123/asciidoctor-vscode-v2.8.7.vsix
+    preferences:
+      asciidoc.use_asciidoctorpdf: true
     sidecar:
       directory: asciidoc
       name: asciidoctor-vscode
@@ -191,7 +195,7 @@ plugins:
         https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-yaml/vscode-yaml-0.8.0.vsix
   - repository:
       url: 'https://github.com/camel-tooling/vscode-camelk'
-      revision: 0.0.21
+      revision: 0.0.22
     sidecar:
       directory: camelk
       name: vscode-camelk
@@ -200,15 +204,19 @@ plugins:
       cpuRequest: 30m
     extensions:
       - >-
-        https://download.jboss.org/jbosstools/vscode/stable/vscode-camelk/vscode-camelk-0.0.21-109.vsix
+        https://download.jboss.org/jbosstools/vscode/stable/vscode-camelk/vscode-camelk-0.0.22-135.vsix
       - >-
         https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-kubernetes-tools/vscode-kubernetes-tools-1.2.1.vsix
       - >-
         https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-yaml/vscode-yaml-0.11.1.vsix
+      - >-
+        https://download.jboss.org/jbosstools/stable/vscode-commons/vscode-commons-0.0.4-38.vsix
   - id: redhat/quarkus-java11
     repository:
       url: 'https://github.com/redhat-developer/vscode-quarkus'
       revision: v1.7.0
+    preferences:
+      java.server.launchMode: Standard
     sidecar:
       directory: java
       name: vscode-quarkus
@@ -222,17 +230,19 @@ plugins:
       - >-
         https://download.jboss.org/jbosstools/vscode/stable/vscode-quarkus/vscode-quarkus-1.7.0-437.vsix
       - >-
-        https://download.jboss.org/jbosstools/static/jdt.ls/stable/java-0.63.0-2222.vsix
+        https://download.jboss.org/jbosstools/static/jdt.ls/stable/java-0.75.0-60.vsix
       - >-
         https://download.jboss.org/jbosstools/vscode/stable/vscode-microprofile/vscode-microprofile-0.1.1-48.vsix
       - >-
         https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-java-debug/vscode-java-debug-0.26.0.vsix
       - >-
-        https://open-vsx.org/api/vscjava/vscode-java-test/0.24.0/file/vscjava.vscode-java-test-0.24.0.vsix
+        https://open-vsx.org/api/vscjava/vscode-java-test/0.28.1/file/vscjava.vscode-java-test-0.28.1.vsix
   - id: redhat/quarkus-java8
     repository:
       url: 'https://github.com/redhat-developer/vscode-quarkus'
       revision: v1.5.0
+    preferences:
+      java.server.launchMode: Standard
     sidecar:
       directory: java8
       memoryLimit: 1500Mi
@@ -337,10 +347,12 @@ plugins:
   - id: redhat/java11
     repository:
       url: 'https://github.com/redhat-developer/vscode-java'
-      revision: v0.69.0
+      revision: v0.75.0
     featured: true
     aliases:
       - redhat/java
+    preferences:
+      java.server.launchMode: Standard
     sidecar:
       directory: java
       name: vscode-java
@@ -352,15 +364,17 @@ plugins:
           path: /home/theia/.m2
     extensions:
       - >-
-        https://download.jboss.org/jbosstools/static/jdt.ls/stable/java-0.69.0-2547.vsix
+        https://download.jboss.org/jbosstools/static/jdt.ls/stable/java-0.75.0-60.vsix
       - >-
         https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-java-debug/vscode-java-debug-0.26.0.vsix
       - >-
-        https://open-vsx.org/api/vscjava/vscode-java-test/0.24.0/file/vscjava.vscode-java-test-0.24.0.vsix
+        https://open-vsx.org/api/vscjava/vscode-java-test/0.28.1/file/vscjava.vscode-java-test-0.28.1.vsix
   - id: redhat/java8
     repository:
       url: 'https://github.com/redhat-developer/vscode-java'
       revision: v0.63.0
+    preferences:
+      java.server.launchMode: Standard
     sidecar:
       directory: java8
       name: vscode-java
@@ -376,7 +390,7 @@ plugins:
       - >-
         https://download.jboss.org/jbosstools/vscode/3rdparty/vscode-java-debug/vscode-java-debug-0.26.0.vsix
       - >-
-        https://open-vsx.org/api/vscjava/vscode-java-test/0.24.0/file/vscjava.vscode-java-test-0.24.0.vsix
+        https://open-vsx.org/api/vscjava/vscode-java-test/0.28.1/file/vscjava.vscode-java-test-0.28.1.vsix
   - repository:
       url: 'https://github.com/felixfbecker/vscode-php-debug'
       revision: v1.13.0
@@ -448,9 +462,9 @@ plugins:
         https://github.com/redhat-developer/codeready-workspaces-vscode-extensions/releases/download/v356aec7/vscode-xml-0.14.0.vsix
   - repository:
       url: https://github.com/redhat-developer/vscode-didact
-      revision: 0.3.1
+      revision: 0.3.2
     extensions:
-      - https://download.jboss.org/jbosstools/vscode/stable/vscode-didact/vscode-didact-0.3.1-166.vsix
+      - https://download.jboss.org/jbosstools/vscode/stable/vscode-didact/vscode-didact-0.3.2-227.vsix
   - repository:
       url: 'https://github.com/Azure/vscode-kubernetes-tools'
       revision: 1.2.1
@@ -552,10 +566,10 @@ plugins:
         https://open-vsx.org/api/vscode/typescript-language-features/1.49.3/file/vscode.typescript-language-features-1.49.3.vsix
   - repository:
       url: 'https://bitbucket.org/atlassianlabs/atlascode'
-      revision: 2.6.6
+      revision: 2.8.6
     extensions:
       - >-
-        https://download.jboss.org/jbosstools/vscode/3rdparty/atlascode/atlascode-2.6.6.vsix
+        https://open-vsx.org/api/atlassian/atlascode/2.8.6/file/atlassian.atlascode-2.8.6.vsix
   - repository:
       url: 'https://github.com/eclipse/che-che4z-lsp-for-cobol'
       revision: 0.17.1
@@ -617,6 +631,8 @@ plugins:
   - repository:
       url: 'https://github.com/timonwong/vscode-shellcheck'
       revision: v0.13.2
+    preferences:
+      shellcheck.executablePath: /bin/shellcheck
     sidecar:
       directory: shellcheck
       name: shellcheck
@@ -700,6 +716,9 @@ plugins:
   - repository:
       url: https://github.com/castwide/vscode-solargraph
       revision: 212e76d
+    preferences:
+      solargraph.bundlerPath: /usr/local/bin/bundle
+      solargraph.commandPath: /usr/local/bundle/bin/solargraph
     sidecar:
       directory: ruby
       name: vscode-ruby
