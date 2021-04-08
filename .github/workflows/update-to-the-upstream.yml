@@ -25,7 +25,7 @@ jobs:
         git push -u origin prp-update-to-the-upstream
     - name: create PR
       run: |
-        gh pr create --base azure-pipelines --head PizzaFactory:prp-update-to-the-upstream -t "[Scheduled] Update to the upstream." -b ""
+        gh pr create -B azure-pipelines -t "[Scheduled] Update to the upstream." -b ""
     - name: Notify to Google Chat
       uses: Co-qn/google-chat-notification@releases/v1
       with:
