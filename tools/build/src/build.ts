@@ -26,6 +26,8 @@ import { CheTheiaPluginAnalyzerMetaInfo } from './che-theia-plugin/che-theia-plu
 import { CheTheiaPluginYaml } from './che-theia-plugin/che-theia-plugins-yaml';
 import { CheTheiaPluginsAnalyzer } from './che-theia-plugin/che-theia-plugins-analyzer';
 import { CheTheiaPluginsMetaYamlGenerator } from './che-theia-plugin/che-theia-plugins-meta-yaml-generator';
+import { CheTheiaPluginsYamlGenerator } from './che-theia-plugin/che-theia-plugins-yaml-generator';
+import { CheTheiaPluginsYamlWriter } from './che-theia-plugin/che-theia-plugins-yaml-writer';
 import { Deferred } from './util/deferred';
 import { DigestImagesHelper } from './meta-yaml/digest-images-helper';
 import { ExternalImagesWriter } from './meta-yaml/external-images-writer';
@@ -72,6 +74,9 @@ export class Build {
   @inject(CheTheiaPluginsMetaYamlGenerator)
   private cheTheiaPluginsMetaYamlGenerator: CheTheiaPluginsMetaYamlGenerator;
 
+  @inject(CheTheiaPluginsYamlGenerator)
+  private cheTheiaPluginsYamlGenerator: CheTheiaPluginsYamlGenerator;
+
   @inject(CheEditorsMetaYamlGenerator)
   private cheEditorsMetaYamlGenerator: CheEditorsMetaYamlGenerator;
 
@@ -80,6 +85,9 @@ export class Build {
 
   @inject(MetaYamlWriter)
   private metaYamlWriter: MetaYamlWriter;
+
+  @inject(CheTheiaPluginsYamlWriter)
+  private cheTheiaPluginsYamlWriter: CheTheiaPluginsYamlWriter;
 
   @inject(ExternalImagesWriter)
   private externalImagesWriter: ExternalImagesWriter;
@@ -140,7 +148,7 @@ export class Build {
     // First, parse che-theia-plugins yaml
     const analyzingCheTheiaPlugins: CheTheiaPluginAnalyzerMetaInfo[] = await Promise.all(
       cheTheiaPluginsYaml.plugins.map(async (cheTheiaPluginYaml: CheTheiaPluginYaml) => {
-        const extensions = cheTheiaPluginYaml.extensions || [];
+        const extension = cheTheiaPluginYaml.extension;
         const vsixInfos = new Map<string, VsixInfo>();
         const id = cheTheiaPluginYaml.id;
         const featured = cheTheiaPluginYaml.featured || false;
@@ -148,7 +156,22 @@ export class Build {
         const preferences = cheTheiaPluginYaml.preferences;
         const sidecar = cheTheiaPluginYaml.sidecar;
         const repository = cheTheiaPluginYaml.repository;
-        return { id, sidecar, preferences, aliases, extensions, featured, vsixInfos, repository };
+        const metaYaml = cheTheiaPluginYaml.metaYaml;
+        const extraDependencies = cheTheiaPluginYaml.extraDependencies;
+        const skipDependencies = cheTheiaPluginYaml.skipDependencies;
+        return {
+          id,
+          sidecar,
+          preferences,
+          aliases,
+          extension,
+          metaYaml,
+          extraDependencies,
+          skipDependencies,
+          featured,
+          vsixInfos,
+          repository,
+        };
       })
     );
 
@@ -160,11 +183,11 @@ export class Build {
     this.wrapIntoTask(title, deferred.promise, downloadAndAnalyzeTask);
     await Promise.all(
       analyzingCheTheiaPlugins.map(async cheTheiaPlugin => {
-        const analyzePromise = Promise.all(
-          cheTheiaPlugin.extensions.map(async vsixExtension =>
-            this.analyzeCheTheiaPlugin(cheTheiaPlugin, vsixExtension)
-          )
-        );
+        if (!cheTheiaPlugin.extension) {
+          throw new Error(`The plugin ${JSON.stringify(cheTheiaPlugin)} does not have mandatory extension field`);
+        }
+        console.log('Analyzing ' + cheTheiaPlugin.extension);
+        const analyzePromise = this.analyzeCheTheiaPlugin(cheTheiaPlugin, cheTheiaPlugin.extension);
         this.updateTask(
           analyzePromise,
           downloadAndAnalyzeTask,
@@ -172,7 +195,7 @@ export class Build {
             current++;
             downloadAndAnalyzeTask.text = `${title} [${current}/${analyzingCheTheiaPlugins.length}] ...`;
           },
-          `Error analyzing extensions ${cheTheiaPlugin.extensions} from ${cheTheiaPlugin.repository.url}`
+          `Error analyzing extension ${cheTheiaPlugin.extension} from ${cheTheiaPlugin.repository.url}`
         );
 
         return analyzePromise;
@@ -187,19 +210,18 @@ export class Build {
         id = plugin.id;
       } else {
         // need to compute id
-        const firstExtension = plugin.extensions[0];
-        const vsixDetails = plugin.vsixInfos.get(firstExtension);
+        const vsixDetails = plugin.vsixInfos.get(plugin.extension);
         const packageInfo = vsixDetails?.packageJson;
         if (!packageInfo) {
-          throw new Error(`Unable to find a package.json file for extension ${firstExtension}`);
+          throw new Error(`Unable to find a package.json file for extension ${plugin.extension}`);
         }
         const publisher = packageInfo.publisher;
         if (!publisher) {
-          throw new Error(`Unable to find a publisher field in package.json file for extension ${firstExtension}`);
+          throw new Error(`Unable to find a publisher field in package.json file for extension ${plugin.extension}`);
         }
         const name = packageInfo.name;
         if (!name) {
-          throw new Error(`Unable to find a name field in package.json file for extension ${firstExtension}`);
+          throw new Error(`Unable to find a name field in package.json file for extension ${plugin.extension}`);
         }
         id = `${publisher}/${name}`.toLowerCase();
       }
@@ -273,6 +295,10 @@ export class Build {
       'Compute meta.yaml for che-theia-plugins',
       this.cheTheiaPluginsMetaYamlGenerator.compute(cheTheiaPlugins)
     );
+    const cheTheiaPluginsYaml = await this.wrapIntoTask(
+      'Compute che-theia-plugin.yaml fragments for che-theia-plugins',
+      this.cheTheiaPluginsYamlGenerator.compute(cheTheiaPlugins)
+    );
 
     const cheEditors = await this.wrapIntoTask('Analyze che-editors.yaml file', this.analyzeCheEditorsYaml());
     const cheEditorsMetaYaml = await this.wrapIntoTask(
@@ -302,6 +328,12 @@ export class Build {
     const generatedYamls = await this.wrapIntoTask(
       'Write meta.yamls in v3/plugins folder',
       this.metaYamlWriter.write(allMetaYamls)
+    );
+
+    // write che-theia-plugins fragment
+    await this.wrapIntoTask(
+      'Write che-theia-plugin.yaml fragment in v3/plugins folder',
+      this.cheTheiaPluginsYamlWriter.write(cheTheiaPluginsYaml)
     );
 
     // generate index.json
