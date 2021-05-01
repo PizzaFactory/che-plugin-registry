@@ -25,21 +25,25 @@ export class IndexWriter {
   private outputRootDirectory: string;
 
   getLinks(plugin: MetaYamlPluginInfo): { self: string; devfile?: string } {
-    const links: { self: string; devfile?: string } = {
+    const links: { self: string; devfile?: string; plugin?: string } = {
       self: `/v3/plugins/${plugin.id}`,
     };
     if (plugin.type === 'Che Editor' || plugin.type === 'Che Plugin') {
       links.devfile = `/v3/plugins/${plugin.id}/devfile.yaml`;
+    } else if (plugin.type === 'VS Code extension') {
+      links.plugin = `/v3/plugins/${plugin.id}/che-theia-plugin.yaml`;
     }
     return links;
   }
 
   async write(generatedMetaYamlPluginInfos: MetaYamlPluginInfo[]): Promise<void> {
+    const metaYamlPluginInfos = generatedMetaYamlPluginInfos.filter(metaPluginInfo => !metaPluginInfo.skipIndex);
+
     const v3PluginsFolder = path.resolve(this.outputRootDirectory, 'v3', 'plugins');
     await fs.ensureDir(v3PluginsFolder);
     const externalImagesFile = path.join(v3PluginsFolder, 'index.json');
 
-    const indexValues = generatedMetaYamlPluginInfos.map(plugin => ({
+    const indexValues = metaYamlPluginInfos.map(plugin => ({
       id: plugin.id,
       description: plugin.description,
       displayName: plugin.displayName,
