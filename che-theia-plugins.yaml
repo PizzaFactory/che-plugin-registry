@@ -195,14 +195,14 @@ plugins:
         - redhat/vscode-yaml
   - repository:
       url: 'https://github.com/camel-tooling/vscode-camelk'
-      revision: 0.0.23
+      revision: 0.0.24
     sidecar:
       directory: camelk
       name: vscode-camelk
       memoryLimit: 1Gi
       cpuLimit: 500m
       cpuRequest: 30m
-    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-camelk/vscode-camelk-0.0.23-159.vsix
+    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-camelk/vscode-camelk-0.0.24-198.vsix
     metaYaml:
       skipDependencies:
         - redhat/vscode-commons
@@ -453,14 +453,14 @@ plugins:
     extension: https://download.jboss.org/jbosstools/vscode/stable/mta-vscode-extension/mta-vscode-extension-0.0.63-49.vsix
   - repository:
       url: 'https://github.com/camel-tooling/camel-lsp-client-vscode'
-      revision: 0.0.31
+      revision: 0.0.32
     sidecar:
       directory: java
       name: vscode-apache-camel
       memoryLimit: 768Mi
       cpuLimit: 500m
       cpuRequest: 30m
-    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-apache-camel/vscode-apache-camel-0.0.31-143.vsix
+    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-apache-camel/vscode-apache-camel-0.0.32-205.vsix
   - repository:
       url: 'https://github.com/redhat-developer/vscode-xml'
       revision: 0.13.0
@@ -474,8 +474,8 @@ plugins:
     extension: https://github.com/redhat-developer/codeready-workspaces-vscode-extensions/releases/download/v356aec7/vscode-xml-0.14.0.vsix
   - repository:
       url: https://github.com/redhat-developer/vscode-didact
-      revision: 0.3.2
-    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-didact/vscode-didact-0.3.2-227.vsix
+      revision: 0.4.0
+    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-didact/vscode-didact-0.4.0-309.vsix
   - repository:
       url: 'https://github.com/Azure/vscode-kubernetes-tools'
       revision: 1.2.1
