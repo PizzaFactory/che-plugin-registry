@@ -453,17 +453,20 @@ plugins:
     extension: https://download.jboss.org/jbosstools/vscode/stable/mta-vscode-extension/mta-vscode-extension-0.0.63-49.vsix
   - repository:
       url: 'https://github.com/camel-tooling/camel-lsp-client-vscode'
-      revision: 0.0.32
+      revision: 0.0.33
     sidecar:
       directory: java
       name: vscode-apache-camel
       memoryLimit: 768Mi
       cpuLimit: 500m
       cpuRequest: 30m
-    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-apache-camel/vscode-apache-camel-0.0.32-205.vsix
+    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-apache-camel/vscode-apache-camel-0.0.33-232.vsix
   - repository:
       url: 'https://github.com/redhat-developer/vscode-xml'
-      revision: 0.13.0
+      revision: 0.16.1
+    preferences:
+      xml.server.binary.trustedHashes:
+        - "b8e08163ffff7561060e10f142a52655ea1a5d9a"
     featured: true
     sidecar:
       directory: java
@@ -471,7 +474,10 @@ plugins:
       memoryLimit: 768Mi
       cpuLimit: 500m
       cpuRequest: 30m
-    extension: https://github.com/redhat-developer/codeready-workspaces-vscode-extensions/releases/download/v356aec7/vscode-xml-0.14.0.vsix
+    extension: https://github.com/redhat-developer/codeready-workspaces-vscode-extensions/releases/download/v6619960/vscode-xml-0.16.1.vsix
+    metaYaml:
+      skipDependencies:
+        - redhat/vscode-commons
   - repository:
       url: https://github.com/redhat-developer/vscode-didact
       revision: 0.4.0
