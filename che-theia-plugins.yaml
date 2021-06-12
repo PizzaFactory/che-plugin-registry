@@ -142,6 +142,9 @@ plugins:
       memoryLimit: 512Mi
       cpuLimit: 500m
       cpuRequest: 30m
+      volumeMounts:
+        - name: venv
+          path: /home/theia/.venv
     extension: https://github.com/microsoft/vscode-python/releases/download/2020.7.94776/ms-python-release.vsix
   - repository:
       url: 'https://github.com/asciidoctor/asciidoctor-vscode'
@@ -195,19 +198,19 @@ plugins:
         - redhat/vscode-yaml
   - repository:
       url: 'https://github.com/camel-tooling/vscode-camelk'
-      revision: 0.0.24
+      revision: 0.0.25
     sidecar:
       directory: camelk
       name: vscode-camelk
       memoryLimit: 1Gi
       cpuLimit: 500m
       cpuRequest: 30m
-    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-camelk/vscode-camelk-0.0.24-198.vsix
+    extension: https://download.jboss.org/jbosstools/vscode/stable/vscode-camelk/vscode-camelk-0.0.25-226.vsix
     metaYaml:
       skipDependencies:
         - redhat/vscode-commons
   - repository:
-      url: redhat/vscode-microprofile
+      url: 'https://github.com/redhat-developer/vscode-microprofile'
       revision: 174c77f51a57bf1cfadba8f78ad7072ce63baa1d
     sidecar:
       directory: java
@@ -605,8 +608,8 @@ plugins:
     extension: https://github.com/eclipse/che-che4z-lsp-for-hlasm/releases/download/0.12.0/hlasm-language-support-0.12.0-alpine.vsix
   - repository:
       url: 'https://github.com/eclipse/che-che4z-explorer-for-endevor'
-      revision: 0.11.1
-    extension: https://github.com/eclipse/che-che4z-explorer-for-endevor/releases/download/0.11.1/explorer-for-endevor-0.11.1.vsix
+      revision: 0.12.1
+    extension: https://github.com/eclipse/che-che4z-explorer-for-endevor/releases/download/0.12.1/explorer-for-endevor-0.12.1.vsix
   - repository:
       url: 'https://github.com/zxh0/vscode-proto3'
       revision: c4d9eeb54294e3cee86254261edf036901f29dec

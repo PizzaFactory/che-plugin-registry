@@ -43,7 +43,7 @@ describe('Test MetaYamlToDevfileYaml', () => {
     const component = devfileYaml.components[0];
     expect(component.name).toBe('che-machine-exec');
     const componentContainer = component.container;
-    expect(componentContainer.image).toBe('quay.io/eclipse/che-machine-exec:nightly');
+    expect(componentContainer.image).toBe('quay.io/eclipse/che-machine-exec:next');
     expect(componentContainer.command).toStrictEqual(['/go/bin/che-machine-exec', '--url', '0.0.0.0:4444']);
 
     expect(componentContainer.endpoints).toBeDefined();
@@ -77,7 +77,7 @@ describe('Test MetaYamlToDevfileYaml', () => {
     expect(theiaIdeFirstEndpoint.name).toBe('theia');
     expect(theiaIdeFirstEndpoint.exposure).toBe('public');
     const theiaIdeFirstEndpointAttributes = theiaIdeFirstEndpoint.attributes;
-    expect(theiaIdeFirstEndpointAttributes.type).toBe('ide');
+    expect(theiaIdeFirstEndpointAttributes.type).toBe('main');
 
     expect(theiaIdeComponentContainer.env).toBeDefined();
     expect(theiaIdeComponentContainer.env?.length).toBe(4);

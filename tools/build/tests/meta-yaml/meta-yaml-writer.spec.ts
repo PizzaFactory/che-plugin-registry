@@ -103,7 +103,7 @@ type: VS Code extension
 displayName: display-name
 title: my-title
 description: my-description
-icon: /v3/images/my-publisher-my-name-icon.png
+icon: /images/my-publisher-my-name-icon.png
 category: Programming Languages
 repository: 'http://fake-repository'
 firstPublicationDate: '2019-01-01'
@@ -161,7 +161,7 @@ type: VS Code extension
 displayName: display-name
 title: my-title
 description: my-description
-icon: /v3/images/eclipse-che-logo.png
+icon: /images/eclipse-che-logo.png
 category: Programming Languages
 repository: 'http://fake-repository'
 firstPublicationDate: '2019-01-01'
@@ -239,7 +239,7 @@ type: VS Code extension
 displayName: display-name
 title: my-title
 description: my-description
-icon: /v3/images/eclipse-che-logo.png
+icon: /images/eclipse-che-logo.png
 category: Programming Languages
 repository: 'http://fake-repository'
 firstPublicationDate: '2019-01-01'
@@ -319,7 +319,7 @@ type: VS Code extension
 displayName: display-name
 title: my-title
 description: my-description
-icon: /v3/images/eclipse-che-logo.png
+icon: /images/eclipse-che-logo.png
 category: Programming Languages
 repository: 'http://fake-repository'
 firstPublicationDate: '2019-01-01'
@@ -379,7 +379,7 @@ type: VS Code extension
 displayName: display-name
 title: my-title
 description: my-description
-icon: /v3/images/eclipse-che-logo.png
+icon: /images/eclipse-che-logo.png
 category: Programming Languages
 repository: 'http://fake-repository'
 firstPublicationDate: '2019-01-01'
@@ -434,6 +434,97 @@ spec: {}
           {
             name: 'minimal-endpoint',
             image: 'quay.io/minimal-endpoint',
+          },
+        ],
+      },
+    } as any;
+
+    const metaYamlPlugins: MetaYamlPluginInfo[] = [metaPluginYaml];
+    metaYamlToDevfileYamlConvertMethod.mockReturnValue({ devfileFakeResult: 'dummy' });
+    await metaYamlWriter.write(metaYamlPlugins);
+
+    expect(fsWriteFileSpy).toHaveBeenCalledTimes(2);
+
+    expect(fsWriteFileSpy).toHaveBeenNthCalledWith(
+      2,
+      '/fake-output/v3/plugins/foo/bar/latest/devfile.yaml',
+      'devfileFakeResult: dummy\n'
+    );
+  });
+
+  test('meta yaml --> devfile yaml no spec', async () => {
+    initContainer();
+    metaYamlWriter = container.get(MetaYamlWriter);
+
+    const fsCopyFileSpy = jest.spyOn(fs, 'copyFile');
+    const fsEnsureDirSpy = jest.spyOn(fs, 'ensureDir');
+    const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
+
+    fsEnsureDirSpy.mockReturnValue();
+    fsCopyFileSpy.mockReturnValue();
+    fsWriteFileSpy.mockReturnValue();
+
+    metaPluginYaml = {
+      apiVersion: 'v2',
+      id: 'foo/bar',
+      publisher: 'foo',
+      name: 'bar',
+      version: '0.0.1',
+      displayName: 'minimal-endpoint',
+      title: 'minimal-endpoint',
+      description: 'minimal-endpoint',
+      icon: '/v3/images/eclipse-che-logo.png',
+      category: 'Other',
+      repository: 'http://fake-repository',
+      firstPublicationDate: '2019-01-01',
+      latestUpdateDate,
+      type: 'Che Plugin',
+    } as any;
+
+    const metaYamlPlugins: MetaYamlPluginInfo[] = [metaPluginYaml];
+    metaYamlToDevfileYamlConvertMethod.mockReturnValue({ devfileFakeResult: 'dummy' });
+    await metaYamlWriter.write(metaYamlPlugins);
+
+    expect(fsWriteFileSpy).toHaveBeenCalledTimes(2);
+
+    expect(fsWriteFileSpy).toHaveBeenNthCalledWith(
+      2,
+      '/fake-output/v3/plugins/foo/bar/latest/devfile.yaml',
+      'devfileFakeResult: dummy\n'
+    );
+  });
+
+  test('meta yaml --> devfile yaml w/ initContainers', async () => {
+    initContainer();
+    metaYamlWriter = container.get(MetaYamlWriter);
+
+    const fsCopyFileSpy = jest.spyOn(fs, 'copyFile');
+    const fsEnsureDirSpy = jest.spyOn(fs, 'ensureDir');
+    const fsWriteFileSpy = jest.spyOn(fs, 'writeFile');
+
+    fsEnsureDirSpy.mockReturnValue();
+    fsCopyFileSpy.mockReturnValue();
+    fsWriteFileSpy.mockReturnValue();
+
+    metaPluginYaml = {
+      apiVersion: 'v2',
+      id: 'foo/bar',
+      publisher: 'foo',
+      name: 'bar',
+      version: '0.0.1',
+      displayName: 'minimal-endpoint',
+      title: 'minimal-endpoint',
+      description: 'minimal-endpoint',
+      icon: '/v3/images/eclipse-che-logo.png',
+      category: 'Other',
+      repository: 'http://fake-repository',
+      firstPublicationDate: '2019-01-01',
+      latestUpdateDate,
+      type: 'Che Plugin',
+      spec: {
+        initContainers: [
+          {
+            image: 'my-init-container:foo',
           },
         ],
       },
