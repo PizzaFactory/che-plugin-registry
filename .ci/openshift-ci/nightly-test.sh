@@ -27,13 +27,14 @@ runTests() {
   runTest "InstallPluginUsingUI" "install-plugin-test"
   runTest "JavaPlugin" "java11-plugin-test"
   runTest "PhpPlugin" "php-plugin-test"
-  runTest "PythonPluginTest" "python-plugin-test"
+  runTest "PythonPlugin" "python-plugin-test"
   runTest "TypescriptPlugin" "typescript-debug-plugins"
   runTest "VscodeKubernetesPlugin" "nodejs-24lop"
   runTest "VscodeShellcheckPlugin" "nodejs-zmecm"
   runTest "VscodeValePlugin" "che-docs-test"
   runTest "VscodeXmlPlugin" "xml-plugin-test"
   runTest "VscodeYamlPlugin" "nodejs-zmecm"
+  runTest "GitHubPullRequestPlugin" "github-pr-plugin"
 }
 
 setupTestEnvironment
