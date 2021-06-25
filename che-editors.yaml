@@ -488,7 +488,7 @@ editors:
         publisher: pizzafactory
         version: next
         title: Eclipse Theia development version (enhanced by PizzaFactory).
-        repository: https://github.com/eclipse/che-theia
+        repository: https://github.com/pizzafactory/che-theia
         firstPublicationDate: "2019-08-07"
     endpoints:
       - name: "theia"
